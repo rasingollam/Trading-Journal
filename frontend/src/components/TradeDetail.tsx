@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Trade } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
@@ -10,12 +11,14 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'var(--accent-gold)',
     fontFamily: 'var(--font-mono)',
     fontSize: '18px',
+    marginBottom: '4px',
   },
   imageBox: {
     width: '100%',
     borderRadius: '6px',
     overflow: 'hidden',
     border: '1px solid var(--border)',
+    cursor: 'pointer',
   },
   image: {
     width: '100%',
@@ -50,7 +53,22 @@ const styles: Record<string, React.CSSProperties> = {
   actions: {
     display: 'flex',
     gap: '12px',
-    marginTop: '8px',
+    marginBottom: '8px',
+  },
+  overlay: {
+    position: 'fixed' as const,
+    inset: 0,
+    zIndex: 9999,
+    background: 'rgba(0,0,0,0.92)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'zoom-out',
+  },
+  overlayImg: {
+    maxWidth: '95vw',
+    maxHeight: '95vh',
+    objectFit: 'contain' as const,
   },
 };
 
@@ -73,6 +91,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeDetailProps) {
+  const [fullscreen, setFullscreen] = useState<string | null>(null);
   const resultR = trade.resultR ? parseFloat(trade.resultR) : null;
   const resultColor = resultR !== null ? (resultR >= 0 ? 'var(--success)' : 'var(--accent-red)') : 'var(--text-secondary)';
 
@@ -80,7 +99,12 @@ export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeD
     <div style={styles.container}>
       <h2 style={styles.heading}>Trade Details</h2>
 
-      <div style={styles.imageBox}>
+      <div style={styles.actions}>
+        <button onClick={() => onEdit(trade)}>Edit</button>
+        <button className="btn-danger" onClick={() => onDelete(trade)}>Delete</button>
+      </div>
+
+      <div style={styles.imageBox} onClick={() => setFullscreen(trade.openScreenshotUrl)}>
         <img
           src={trade.openScreenshotUrl}
           alt="Open screenshot"
@@ -95,7 +119,7 @@ export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeD
       </div>
 
       {trade.closeScreenshotUrl && (
-        <div style={styles.imageBox}>
+        <div style={styles.imageBox} onClick={() => setFullscreen(trade.closeScreenshotUrl)}>
           <img
             src={trade.closeScreenshotUrl}
             alt="Close screenshot"
@@ -134,10 +158,11 @@ export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeD
         <div style={styles.date}>{formatDate(trade.updatedAt)}</div>
       </div>
 
-      <div style={styles.actions}>
-        <button onClick={() => onEdit(trade)}>Edit</button>
-        <button className="btn-danger" onClick={() => onDelete(trade)}>Delete</button>
-      </div>
+      {fullscreen && (
+        <div style={styles.overlay} onClick={() => setFullscreen(null)}>
+          <img src={fullscreen} alt="Fullscreen" style={styles.overlayImg} />
+        </div>
+      )}
     </div>
   );
 }
