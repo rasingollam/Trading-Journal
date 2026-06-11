@@ -26,5 +26,5 @@ export function deleteTrade(strategyId: number, tradeId: number) {
 }
 
 export function getMetrics(strategyId: number) {
-  return client.get<Metrics>(`/api/strategies/${strategyId}/metrics`).then((r) => r.data);
+  return client.get<Metrics>(`/api/strategies/${strategyId}/trades/metrics`).then((r) => r.data);
 }
