@@ -97,8 +97,6 @@ export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeD
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.heading}>Trade Details</h2>
-
       <div style={styles.actions}>
         <button onClick={() => onEdit(trade)}>Edit</button>
         <button className="btn-danger" onClick={() => onDelete(trade)}>Delete</button>

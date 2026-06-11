@@ -22,18 +22,6 @@ const styles: Record<string, React.CSSProperties> = {
     transition: 'transform 0.3s ease',
     padding: '24px',
   },
-  closeBtn: {
-    position: 'absolute',
-    top: '16px',
-    right: '16px',
-    background: 'none',
-    border: 'none',
-    color: 'var(--text-secondary)',
-    fontSize: '24px',
-    cursor: 'pointer',
-    padding: '4px 8px',
-    lineHeight: 1,
-  },
 };
 
 interface SideTrayProps {
@@ -64,9 +52,6 @@ export default function SideTray({ isOpen, onClose, children }: SideTrayProps) {
         role="presentation"
       />
       <div style={styles.tray}>
-        <button style={styles.closeBtn} onClick={onClose} aria-label="Close">
-          &times;
-        </button>
         {children}
       </div>
     </>
