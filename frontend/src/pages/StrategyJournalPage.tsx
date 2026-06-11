@@ -180,7 +180,7 @@ export default function StrategyJournalPage() {
   return (
     <div>
       <span style={styles.title}>{strategy?.name || 'Journal'}</span>
-      <Link to="/" style={styles.backLink}>&larr; Strategies</Link>
+      <Link to="/" style={styles.backLink}>&larr; Back</Link>
 
       <MetricsPanel
         metrics={metrics}
