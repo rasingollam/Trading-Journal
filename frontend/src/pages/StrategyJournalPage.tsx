@@ -11,15 +11,19 @@ import { listStrategies } from '../api/strategies';
 import type { Strategy, Trade } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
+  headerRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '24px',
+  },
   backLink: {
-    display: 'inline-block',
-    marginBottom: '16px',
     color: 'var(--accent-cyan)',
     fontFamily: 'var(--font-mono)',
     fontSize: '14px',
+    flexShrink: 0,
   },
   title: {
-    display: 'block',
     color: 'var(--accent-gold)',
     fontFamily: 'var(--font-mono)',
     fontSize: '20px',
