@@ -79,6 +79,18 @@ function TradeTableRow({ trade, onSelect }: { trade: Trade; onSelect: (trade: Tr
         />
       </td>
       <td style={styles.td}>
+        {trade.closeScreenshotUrl ? (
+          <img
+            src={trade.closeScreenshotUrl}
+            alt="close"
+            style={styles.thumbnail}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+        ) : (
+          <span style={{ color: 'var(--text-secondary)' }}>--</span>
+        )}
+      </td>
+      <td style={styles.td}>
         {trade.notes ? (
           trade.notes.length > 50 ? trade.notes.slice(0, 50) + '...' : trade.notes
         ) : (
@@ -127,7 +139,8 @@ export default function TradeTable({ trades, onSelect, isLoading, error }: Trade
         <tr>
           <th style={styles.th}>Date</th>
           <th style={styles.th}>Result</th>
-          <th style={styles.th}>Screenshot</th>
+          <th style={styles.th}>Open</th>
+          <th style={styles.th}>Close</th>
           <th style={styles.th}>Notes</th>
         </tr>
       </thead>

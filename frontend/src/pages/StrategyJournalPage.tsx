@@ -18,11 +18,11 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: 'var(--font-mono)',
     fontSize: '14px',
   },
-  heading: {
+  title: {
+    display: 'block',
     color: 'var(--accent-gold)',
     fontFamily: 'var(--font-mono)',
-    fontSize: '24px',
-    marginBottom: '24px',
+    fontSize: '20px',
     letterSpacing: '1px',
   },
   skeleton: {
@@ -175,9 +175,8 @@ export default function StrategyJournalPage() {
 
   return (
     <div>
+      <span style={styles.title}>{strategy?.name || 'Journal'}</span>
       <Link to="/" style={styles.backLink}>&larr; Strategies</Link>
-
-      <h1 style={styles.heading}>{strategy?.name || 'Journal'}</h1>
 
       <MetricsPanel
         metrics={metrics}
