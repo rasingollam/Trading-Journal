@@ -24,6 +24,7 @@ const styles: Record<string, React.CSSProperties> = {
     flexShrink: 0,
   },
   title: {
+    display: 'block',
     color: 'var(--accent-gold)',
     fontFamily: 'var(--font-mono)',
     fontSize: '20px',
@@ -179,8 +180,8 @@ export default function StrategyJournalPage() {
 
   return (
     <div>
-      <span style={styles.title}>{strategy?.name || 'Journal'}</span>
       <Link to="/" style={styles.backLink}>&larr; Back</Link>
+      <span style={styles.title}>{strategy?.name || 'Journal'}</span>
 
       <MetricsPanel
         metrics={metrics}
