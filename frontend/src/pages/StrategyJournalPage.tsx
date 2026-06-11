@@ -172,7 +172,7 @@ export default function StrategyJournalPage() {
           <span>{strategyError}</span>
           <button onClick={() => navigate(0)}>Retry</button>
         </div>
-        <Link to="/" style={styles.backLink}>&larr; Back to Strategies</Link>
+        <Link to="/" style={styles.backLink}>&larr; Back</Link>
       </div>
     );
   }

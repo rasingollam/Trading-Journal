@@ -23,3 +23,8 @@ export interface Metrics {
   drawdown: number;
   sharpeRatio: number | null;
 }
+
+export interface EquityPoint {
+  index: number;
+  value: number;
+}

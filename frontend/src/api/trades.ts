@@ -1,5 +1,5 @@
 import client from './client';
-import type { Trade, Metrics } from '../types';
+import type { Trade, Metrics, EquityPoint } from '../types';
 
 export function listTrades(strategyId: number) {
   return client.get<Trade[]>(`/api/strategies/${strategyId}/trades`).then((r) => r.data);
@@ -27,4 +27,8 @@ export function deleteTrade(strategyId: number, tradeId: number) {
 
 export function getMetrics(strategyId: number) {
   return client.get<Metrics>(`/api/strategies/${strategyId}/trades/metrics`).then((r) => r.data);
+}
+
+export function getEquity(strategyId: number) {
+  return client.get<EquityPoint[]>(`/api/strategies/${strategyId}/trades/equity`).then((r) => r.data);
 }

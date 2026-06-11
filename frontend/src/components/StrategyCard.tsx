@@ -1,4 +1,5 @@
-import type { Strategy } from '../types';
+import type { Strategy, EquityPoint } from '../types';
+import Sparkline from './Sparkline';
 
 const styles: Record<string, React.CSSProperties> = {
   card: {
@@ -23,14 +24,33 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '13px',
     lineHeight: '1.4',
   },
-  winRate: {
+  metricsRow: {
+    display: 'flex',
+    gap: '16px',
+    flexWrap: 'wrap' as const,
+  },
+  metric: {
     fontFamily: 'var(--font-mono)',
-    fontSize: '14px',
+    fontSize: '12px',
+  },
+  metricLabel: {
+    color: 'var(--text-secondary)',
+    fontSize: '10px',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.5px',
+  },
+  metricValue: {
+    fontSize: '13px',
+  },
+  chartRow: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: '4px',
   },
   actions: {
     display: 'flex',
     gap: '8px',
-    marginTop: '8px',
+    marginTop: '4px',
   },
   actionBtn: {
     background: 'none',
@@ -55,12 +75,16 @@ const styles: Record<string, React.CSSProperties> = {
 interface StrategyCardProps {
   strategy: Strategy;
   winRate?: number;
+  profitFactor?: number | null;
+  drawdown?: number;
+  sharpeRatio?: number | null;
+  equity?: EquityPoint[];
   onEdit: (strategy: Strategy) => void;
   onDelete: (strategy: Strategy) => void;
   onClick: (strategy: Strategy) => void;
 }
 
-export default function StrategyCard({ strategy, winRate, onEdit, onDelete, onClick }: StrategyCardProps) {
+export default function StrategyCard({ strategy, winRate, profitFactor, drawdown, sharpeRatio, equity, onEdit, onDelete, onClick }: StrategyCardProps) {
   const handleCardClick = () => onClick(strategy);
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -74,6 +98,7 @@ export default function StrategyCard({ strategy, winRate, onEdit, onDelete, onCl
   };
 
   const winRateColor = winRate !== undefined ? (winRate > 50 ? 'var(--success)' : winRate > 0 ? 'var(--accent-gold)' : 'var(--text-secondary)') : 'var(--text-secondary)';
+  const eqColor = equity && equity.length > 1 ? (equity[equity.length - 1].value >= 0 ? 'var(--success)' : 'var(--accent-red)') : 'var(--accent-gold)';
 
   return (
     <div
@@ -96,9 +121,37 @@ export default function StrategyCard({ strategy, winRate, onEdit, onDelete, onCl
             : strategy.description}
         </div>
       )}
-      <div style={{ ...styles.winRate, color: winRateColor }}>
-        Win Rate: {winRate !== undefined ? `${winRate.toFixed(1)}%` : '--'}
+      <div style={styles.metricsRow}>
+        <div style={styles.metric}>
+          <div style={styles.metricLabel}>Win Rate</div>
+          <div style={{ ...styles.metricValue, color: winRateColor }}>
+            {winRate !== undefined ? `${winRate.toFixed(1)}%` : '--'}
+          </div>
+        </div>
+        <div style={styles.metric}>
+          <div style={styles.metricLabel}>Profit Factor</div>
+          <div style={{ ...styles.metricValue, color: 'var(--text-primary)' }}>
+            {profitFactor !== undefined && profitFactor !== null ? profitFactor.toFixed(2) : '--'}
+          </div>
+        </div>
+        <div style={styles.metric}>
+          <div style={styles.metricLabel}>Drawdown</div>
+          <div style={{ ...styles.metricValue, color: 'var(--accent-red)' }}>
+            {drawdown !== undefined ? `${drawdown.toFixed(1)}%` : '--'}
+          </div>
+        </div>
+        <div style={styles.metric}>
+          <div style={styles.metricLabel}>Sharpe</div>
+          <div style={{ ...styles.metricValue, color: 'var(--text-primary)' }}>
+            {sharpeRatio !== undefined && sharpeRatio !== null ? sharpeRatio.toFixed(2) : '--'}
+          </div>
+        </div>
       </div>
+      {equity && equity.length > 0 && (
+        <div style={styles.chartRow}>
+          <Sparkline data={equity} color={eqColor} />
+        </div>
+      )}
       <div style={styles.actions}>
         <button style={styles.actionBtn} onClick={handleEdit}>Edit</button>
         <button style={styles.actionBtn} onClick={handleDelete}>Delete</button>

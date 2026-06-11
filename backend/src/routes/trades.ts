@@ -35,6 +35,28 @@ router.get("/metrics", async (req, res, next) => {
   }
 });
 
+router.get("/equity", async (req, res, next) => {
+  try {
+    const strategyId = parseInt((req.params as TradeParams).strategyId, 10);
+    if (isNaN(strategyId)) {
+      res.status(400).json({ error: "Invalid strategyId" });
+      return;
+    }
+    const rows = await tradesService.listTrades(strategyId);
+    let cumR = 0;
+    const equity: { index: number; value: number }[] = [];
+    for (const t of rows) {
+      if (t.resultR !== null) {
+        cumR += parseFloat(t.resultR);
+        equity.push({ index: equity.length + 1, value: Math.round(cumR * 100) / 100 });
+      }
+    }
+    res.json(equity);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get("/:tradeId", async (req, res, next) => {
   try {
     const id = parseInt((req.params as TradeParams).tradeId, 10);
