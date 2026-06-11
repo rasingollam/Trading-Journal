@@ -5,61 +5,89 @@ const styles: Record<string, React.CSSProperties> = {
   card: {
     background: 'var(--bg-card)',
     border: '1px solid var(--border)',
-    borderRadius: '8px',
-    padding: '20px',
+    borderRadius: '12px',
+    padding: '24px',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.25s ease',
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    gap: '14px',
+  },
+  nameRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   name: {
     color: 'var(--accent-gold)',
-    fontSize: '18px',
+    fontSize: '20px',
     fontWeight: 'bold',
     fontFamily: 'var(--font-mono)',
+    letterSpacing: '0.5px',
+  },
+  tradeCount: {
+    color: 'var(--text-secondary)',
+    fontSize: '12px',
+    fontFamily: 'var(--font-mono)',
+    background: 'var(--bg-surface)',
+    padding: '2px 10px',
+    borderRadius: '10px',
+    border: '1px solid var(--border)',
   },
   description: {
     color: 'var(--text-secondary)',
     fontSize: '13px',
-    lineHeight: '1.4',
+    lineHeight: '1.5',
+    marginTop: '-6px',
   },
-  metricsRow: {
-    display: 'flex',
-    gap: '16px',
-    flexWrap: 'wrap' as const,
+  divider: {
+    height: '1px',
+    background: 'var(--border)',
+    opacity: 0.5,
+  },
+  metricsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: '12px',
   },
   metric: {
+    background: 'var(--bg-surface)',
+    borderRadius: '8px',
+    padding: '10px 12px',
     fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
   },
   metricLabel: {
     color: 'var(--text-secondary)',
     fontSize: '10px',
     textTransform: 'uppercase' as const,
-    letterSpacing: '0.5px',
+    letterSpacing: '0.8px',
+    marginBottom: '4px',
   },
   metricValue: {
-    fontSize: '13px',
+    fontSize: '16px',
+    fontWeight: 'bold' as const,
   },
   chartRow: {
     display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: '4px',
+    justifyContent: 'center',
+    padding: '4px 0',
   },
-  actions: {
+  footer: {
     display: 'flex',
-    gap: '8px',
-    marginTop: '4px',
+    justifyContent: 'flex-end',
+    gap: '10px',
+    paddingTop: '4px',
   },
   actionBtn: {
-    background: 'none',
+    background: 'var(--bg-surface)',
     border: '1px solid var(--border)',
     color: 'var(--text-secondary)',
-    padding: '4px 12px',
-    borderRadius: '4px',
+    padding: '6px 16px',
+    borderRadius: '6px',
     cursor: 'pointer',
     fontSize: '12px',
+    fontWeight: 'bold' as const,
+    letterSpacing: '0.5px',
     transition: 'all 0.2s ease',
   },
   skeleton: {
@@ -106,22 +134,25 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
       onClick={handleCardClick}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = 'var(--accent-gold)';
-        e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.2)';
+        e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 215, 0, 0.25)';
+        e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = 'var(--border)';
         e.currentTarget.style.boxShadow = 'none';
+        e.currentTarget.style.transform = 'none';
       }}
     >
       <div style={styles.name}>{strategy.name}</div>
       {strategy.description && (
         <div style={styles.description}>
-          {strategy.description.length > 100
-            ? strategy.description.slice(0, 100) + '...'
+          {strategy.description.length > 120
+            ? strategy.description.slice(0, 120) + '...'
             : strategy.description}
         </div>
       )}
-      <div style={styles.metricsRow}>
+      <div style={styles.divider} />
+      <div style={styles.metricsGrid}>
         <div style={styles.metric}>
           <div style={styles.metricLabel}>Win Rate</div>
           <div style={{ ...styles.metricValue, color: winRateColor }}>
@@ -130,7 +161,7 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
         </div>
         <div style={styles.metric}>
           <div style={styles.metricLabel}>Profit Factor</div>
-          <div style={{ ...styles.metricValue, color: 'var(--text-primary)' }}>
+          <div style={{ ...styles.metricValue, color: profitFactor !== null && profitFactor !== undefined && profitFactor >= 1 ? 'var(--success)' : 'var(--text-primary)' }}>
             {profitFactor !== undefined && profitFactor !== null ? profitFactor.toFixed(2) : '--'}
           </div>
         </div>
@@ -142,19 +173,30 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
         </div>
         <div style={styles.metric}>
           <div style={styles.metricLabel}>Sharpe</div>
-          <div style={{ ...styles.metricValue, color: 'var(--text-primary)' }}>
+          <div style={{ ...styles.metricValue, color: sharpeRatio !== null && sharpeRatio !== undefined && sharpeRatio >= 1 ? 'var(--success)' : 'var(--text-primary)' }}>
             {sharpeRatio !== undefined && sharpeRatio !== null ? sharpeRatio.toFixed(2) : '--'}
           </div>
         </div>
       </div>
       {equity && equity.length > 0 && (
         <div style={styles.chartRow}>
-          <Sparkline data={equity} color={eqColor} />
+          <Sparkline data={equity} color={eqColor} width={140} height={40} />
         </div>
       )}
-      <div style={styles.actions}>
-        <button style={styles.actionBtn} onClick={handleEdit}>Edit</button>
-        <button style={styles.actionBtn} onClick={handleDelete}>Delete</button>
+      <div style={styles.footer}>
+        <button
+          style={styles.actionBtn}
+          onClick={handleEdit}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-gold)'; e.currentTarget.style.color = 'var(--accent-gold)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+        >Edit</button>
+        <button
+          style={styles.actionBtn}
+          className="btn-danger-outline"
+          onClick={handleDelete}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-red)'; e.currentTarget.style.color = 'var(--accent-red)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+        >Delete</button>
       </div>
     </div>
   );
@@ -163,12 +205,18 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
 export function StrategyCardSkeleton() {
   return (
     <div style={{ ...styles.card, cursor: 'default' } as React.CSSProperties}>
-      <div style={{ ...styles.skeleton, width: '60%', height: '22px' }} />
-      <div style={{ ...styles.skeleton, width: '90%' }} />
-      <div style={{ ...styles.skeleton, width: '40%', height: '16px' }} />
-      <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-        <div style={{ ...styles.skeleton, width: '50px', height: '28px' }} />
-        <div style={{ ...styles.skeleton, width: '60px', height: '28px' }} />
+      <div style={{ ...styles.skeleton, width: '55%', height: '24px' }} />
+      <div style={{ ...styles.skeleton, width: '85%', height: '14px' }} />
+      <div style={{ ...styles.skeleton, width: '100%', height: '1px', marginBottom: '0' }} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} style={{ ...styles.skeleton, height: '48px', marginBottom: 0 }} />
+        ))}
+      </div>
+      <div style={{ ...styles.skeleton, width: '140px', height: '40px', margin: '0 auto' }} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+        <div style={{ ...styles.skeleton, width: '55px', height: '30px', marginBottom: 0 }} />
+        <div style={{ ...styles.skeleton, width: '65px', height: '30px', marginBottom: 0 }} />
       </div>
     </div>
   );

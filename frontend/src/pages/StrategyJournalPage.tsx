@@ -160,7 +160,7 @@ export default function StrategyJournalPage() {
     return (
       <div style={styles.notFound}>
         <h2 style={styles.notFoundTitle}>Strategy not found</h2>
-        <Link to="/" style={styles.backLink}>&larr; Back to Strategies</Link>
+        <Link to="/" style={styles.backLink}>&larr; Back</Link>
       </div>
     );
   }
