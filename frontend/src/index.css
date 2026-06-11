@@ -205,7 +205,8 @@ textarea {
   background: var(--accent-gold);
   color: var(--bg-primary);
   border: none;
-  font-size: 28px;
+  font-size: 30px;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
