@@ -70,7 +70,7 @@ const styles: Record<string, React.CSSProperties> = {
   chartRow: {
     display: 'flex',
     justifyContent: 'center',
-    padding: '4px 0',
+    padding: '8px 0',
   },
   footer: {
     display: 'flex',
@@ -180,7 +180,7 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
       </div>
       {equity && equity.length > 0 && (
         <div style={styles.chartRow}>
-          <Sparkline data={equity} color={eqColor} width={140} height={40} />
+          <Sparkline data={equity} color={eqColor} width={140} height={60} />
         </div>
       )}
       <div style={styles.footer}>
