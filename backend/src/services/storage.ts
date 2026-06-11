@@ -41,6 +41,5 @@ export async function deleteFile(objectName: string): Promise<void> {
 }
 
 export function getFileUrl(objectName: string): string {
-  const protocol = config.minioUseSSL ? "https" : "http";
-  return `${protocol}://${config.minioEndpoint}/${config.minioBucket}/${objectName}`;
+  return `/api/files/${objectName}`;
 }

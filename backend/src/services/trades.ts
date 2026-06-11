@@ -81,11 +81,11 @@ export async function updateTrade(
   const updated = rows[0];
 
   if (updated && openKey && existing.openScreenshotUrl) {
-    const oldKey = existing.openScreenshotUrl.split("/").slice(-2).join("/");
+    const oldKey = existing.openScreenshotUrl.replace("/api/files/", "");
     await deleteFile(oldKey);
   }
   if (updated && closeKey && existing.closeScreenshotUrl) {
-    const oldKey = existing.closeScreenshotUrl.split("/").slice(-2).join("/");
+    const oldKey = existing.closeScreenshotUrl.replace("/api/files/", "");
     await deleteFile(oldKey);
   }
 
@@ -99,11 +99,11 @@ export async function deleteTrade(id: number) {
   const rows = await db.delete(trades).where(eq(trades.id, id)).returning();
 
   if (existing.openScreenshotUrl) {
-    const key = existing.openScreenshotUrl.split("/").slice(-2).join("/");
+    const key = existing.openScreenshotUrl.replace("/api/files/", "");
     await deleteFile(key);
   }
   if (existing.closeScreenshotUrl) {
-    const key = existing.closeScreenshotUrl.split("/").slice(-2).join("/");
+    const key = existing.closeScreenshotUrl.replace("/api/files/", "");
     await deleteFile(key);
   }
 
