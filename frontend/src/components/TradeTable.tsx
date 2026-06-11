@@ -24,6 +24,22 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     transition: 'background 0.15s ease',
   },
+  thumbsWrapper: {
+    display: 'flex',
+    gap: '6px',
+  },
+  thumbGroup: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    gap: '2px',
+  },
+  thumbLabel: {
+    fontSize: '10px',
+    color: 'var(--text-secondary)',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.5px',
+  },
   thumbnail: {
     width: '60px',
     height: '40px',
@@ -71,24 +87,33 @@ function TradeTableRow({ trade, onSelect }: { trade: Trade; onSelect: (trade: Tr
         {resultR !== null ? `${resultR > 0 ? '+' : ''}${resultR.toFixed(2)}R` : '--'}
       </td>
       <td style={styles.td}>
-        <img
-          src={trade.openScreenshotUrl}
-          alt="open"
-          style={styles.thumbnail}
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-        />
-      </td>
-      <td style={styles.td}>
-        {trade.closeScreenshotUrl ? (
-          <img
-            src={trade.closeScreenshotUrl}
-            alt="close"
-            style={styles.thumbnail}
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-          />
-        ) : (
-          <span style={{ color: 'var(--text-secondary)' }}>--</span>
-        )}
+        <div style={styles.thumbsWrapper}>
+          <div style={styles.thumbGroup}>
+            <span style={styles.thumbLabel}>Open</span>
+            <img
+              src={trade.openScreenshotUrl}
+              alt="open"
+              style={styles.thumbnail}
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          </div>
+          {trade.closeScreenshotUrl ? (
+            <div style={styles.thumbGroup}>
+              <span style={styles.thumbLabel}>Close</span>
+              <img
+                src={trade.closeScreenshotUrl}
+                alt="close"
+                style={styles.thumbnail}
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+            </div>
+          ) : (
+            <div style={styles.thumbGroup}>
+              <span style={styles.thumbLabel}>Close</span>
+              <span style={{ color: 'var(--text-secondary)', fontSize: '11px' }}>--</span>
+            </div>
+          )}
+        </div>
       </td>
       <td style={styles.td}>
         {trade.notes ? (
@@ -139,8 +164,7 @@ export default function TradeTable({ trades, onSelect, isLoading, error }: Trade
         <tr>
           <th style={styles.th}>Date</th>
           <th style={styles.th}>Result</th>
-          <th style={styles.th}>Open</th>
-          <th style={styles.th}>Close</th>
+          <th style={styles.th}>Screenshots</th>
           <th style={styles.th}>Notes</th>
         </tr>
       </thead>
