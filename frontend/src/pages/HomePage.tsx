@@ -17,6 +17,12 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: '16px',
     borderRadius: '1px',
   },
+  logo: {
+    width: '16px',
+    height: '16px',
+    verticalAlign: 'middle',
+    marginRight: '6px',
+  },
   systemLabel: {
     color: 'var(--text-secondary)',
     fontFamily: 'var(--font-mono)',
@@ -24,6 +30,8 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: '2px',
     textTransform: 'uppercase' as const,
     marginBottom: '4px',
+    display: 'flex',
+    alignItems: 'center',
   },
   title: {
     color: 'var(--accent-gold)',
@@ -92,7 +100,10 @@ export default function HomePage() {
     <div>
       <div style={styles.header}>
         <div style={styles.accentBar} />
-        <div style={styles.systemLabel}>■ TRADING JOURNAL</div>
+        <div style={styles.systemLabel}>
+          <img src="/logo.svg" alt="" style={styles.logo} />
+          TRADING JOURNAL
+        </div>
         <h1 style={styles.title}>Strategies</h1>
       </div>
 
