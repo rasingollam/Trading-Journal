@@ -157,13 +157,13 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
       <div style={styles.divider} />
       <div style={styles.metricsGrid}>
         <div style={styles.metric}>
-          <div style={styles.metricLabel}>Win R.</div>
+          <div style={styles.metricLabel}>WR</div>
           <div style={{ ...styles.metricValue, color: winRateColor }}>
             {winRate !== undefined ? `${winRate.toFixed(1)}%` : '--'}
           </div>
         </div>
         <div style={styles.metric}>
-          <div style={styles.metricLabel}>Profit F.</div>
+          <div style={styles.metricLabel}>PF</div>
           <div style={{ ...styles.metricValue, color: profitFactor !== null && profitFactor !== undefined && profitFactor >= 1 ? 'var(--success)' : 'var(--text-primary)' }}>
             {profitFactor !== undefined && profitFactor !== null ? profitFactor.toFixed(2) : '--'}
           </div>
