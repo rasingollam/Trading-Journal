@@ -14,7 +14,7 @@ export async function getTrade(id: number) {
 
 export async function createTrade(
   strategyId: number,
-  data: { resultR?: string; notes?: string },
+  data: { resultR?: string; notes?: string; pair?: string },
   files?: { openScreenshot?: Express.Multer.File; closeScreenshot?: Express.Multer.File }
 ) {
   let openKey: string | undefined;
@@ -37,13 +37,14 @@ export async function createTrade(
     closeScreenshotUrl: closeKey ? getFileUrl(closeKey) : null,
     resultR: data.resultR || null,
     notes: data.notes || null,
+    pair: data.pair || null,
   }).returning();
   return rows[0];
 }
 
 export async function updateTrade(
   id: number,
-  data: { resultR?: string; notes?: string },
+  data: { resultR?: string; notes?: string; pair?: string },
   files?: { openScreenshot?: Express.Multer.File; closeScreenshot?: Express.Multer.File }
 ) {
   const existing = await getTrade(id);
@@ -75,6 +76,9 @@ export async function updateTrade(
   }
   if (data.notes !== undefined) {
     updateData.notes = data.notes;
+  }
+  if (data.pair !== undefined) {
+    updateData.pair = data.pair;
   }
 
   const rows = await db.update(trades).set(updateData).where(eq(trades.id, id)).returning();

@@ -133,6 +133,11 @@ export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeD
       )}
 
       <div>
+        <div style={styles.label}>Pair</div>
+        <div style={styles.value}>{trade.pair || <span style={{ color: 'var(--text-secondary)' }}>Not specified</span>}</div>
+      </div>
+
+      <div>
         <div style={styles.label}>Result</div>
         <div style={{ ...styles.value, color: resultColor }}>
           {resultR !== null ? `${resultR > 0 ? '+' : ''}${resultR.toFixed(2)} R` : 'Not recorded'}

@@ -88,7 +88,7 @@ router.post("/", upload.fields([
     const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
     const row = await tradesService.createTrade(
       strategyId,
-      { resultR: req.body.resultR, notes: req.body.notes },
+      { resultR: req.body.resultR, notes: req.body.notes, pair: req.body.pair },
       {
         openScreenshot: files?.openScreenshot?.[0],
         closeScreenshot: files?.closeScreenshot?.[0],
@@ -113,7 +113,7 @@ router.put("/:tradeId", upload.fields([
     const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
     const row = await tradesService.updateTrade(
       id,
-      { resultR: req.body.resultR, notes: req.body.notes },
+      { resultR: req.body.resultR, notes: req.body.notes, pair: req.body.pair },
       {
         openScreenshot: files?.openScreenshot?.[0],
         closeScreenshot: files?.closeScreenshot?.[0],

@@ -13,6 +13,7 @@ export interface Trade {
   closeScreenshotUrl: string | null;
   resultR: string | null;
   notes: string | null;
+  pair: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -83,6 +83,7 @@ function TradeTableRow({ trade, onSelect }: { trade: Trade; onSelect: (trade: Tr
       onMouseLeave={(e) => { e.currentTarget.style.background = ''; }}
     >
       <td style={styles.td}>{formatDate(trade.createdAt)}</td>
+      <td style={styles.td}>{trade.pair || <span style={{ color: 'var(--text-secondary)' }}>--</span>}</td>
       <td style={{ ...styles.td, color: resultColor }}>
         {resultR !== null ? `${resultR > 0 ? '+' : ''}${resultR.toFixed(2)}R` : '--'}
       </td>
@@ -163,6 +164,7 @@ export default function TradeTable({ trades, onSelect, isLoading, error }: Trade
       <thead>
         <tr>
           <th style={styles.th}>Date</th>
+          <th style={styles.th}>Pair</th>
           <th style={styles.th}>Result</th>
           <th style={styles.th}>Screenshots</th>
           <th style={styles.th}>Notes</th>

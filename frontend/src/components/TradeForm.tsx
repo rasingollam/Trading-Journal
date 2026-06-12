@@ -50,6 +50,7 @@ export default function TradeForm({ trade, onSave, onCancel, saving, error }: Tr
   const [closeFile, setCloseFile] = useState<File | null>(null);
   const [resultR, setResultR] = useState('');
   const [notes, setNotes] = useState('');
+  const [pair, setPair] = useState('');
   const [openPreview, setOpenPreview] = useState<string | null>(null);
   const [closePreview, setClosePreview] = useState<string | null>(null);
   const openRef = useRef<HTMLInputElement>(null);
@@ -59,11 +60,13 @@ export default function TradeForm({ trade, onSave, onCancel, saving, error }: Tr
     if (trade) {
       setResultR(trade.resultR || '');
       setNotes(trade.notes || '');
+      setPair(trade.pair || '');
       setOpenPreview(trade.openScreenshotUrl);
       setClosePreview(trade.closeScreenshotUrl);
     } else {
       setResultR('');
       setNotes('');
+      setPair('');
       setOpenFile(null);
       setCloseFile(null);
       setOpenPreview(null);
@@ -94,12 +97,23 @@ export default function TradeForm({ trade, onSave, onCancel, saving, error }: Tr
     if (closeFile) fd.append('closeScreenshot', closeFile);
     if (resultR) fd.append('resultR', resultR);
     if (notes) fd.append('notes', notes);
+    if (pair) fd.append('pair', pair);
     await onSave(fd);
   };
 
   return (
     <form style={styles.form} onSubmit={handleSubmit}>
       <h2 style={styles.heading}>{trade ? 'Edit Trade' : 'New Trade'}</h2>
+
+      <div className="form-group">
+        <label htmlFor="pair">Pair</label>
+        <select id="pair" value={pair} onChange={(e) => setPair(e.target.value)} disabled={saving}>
+          <option value="">-- Not specified --</option>
+          <option value="BTC/USDT">BTC/USDT</option>
+          <option value="ETH/USDT">ETH/USDT</option>
+          <option value="BNB/USDT">BNB/USDT</option>
+        </select>
+      </div>
 
       <div className="form-group">
         <label>Open Screenshot</label>

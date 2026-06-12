@@ -15,6 +15,7 @@ export const trades = pgTable("trades", {
   closeScreenshotUrl: text("close_screenshot_url"),
   resultR: numeric("result_r", { precision: 10, scale: 2 }),
   notes: text("notes"),
+  pair: varchar("pair", { length: 20 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

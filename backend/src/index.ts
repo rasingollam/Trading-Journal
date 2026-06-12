@@ -49,9 +49,13 @@ const start = async () => {
         close_screenshot_url TEXT,
         result_r NUMERIC(10,2),
         notes TEXT,
+        pair VARCHAR(20),
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
+    `));
+    await db.execute(sql.raw(`
+      ALTER TABLE trades ADD COLUMN IF NOT EXISTS pair VARCHAR(20);
     `));
     console.log("Tables ensured");
   } catch (err) {
