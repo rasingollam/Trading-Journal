@@ -1,10 +1,17 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { db } from "../db/connection.js";
 import { trades } from "../db/schema.js";
 import { uploadFile, deleteFile, getFileUrl } from "./storage.js";
 
 export async function listTrades(strategyId: number) {
-  return db.select().from(trades).where(eq(trades.strategyId, strategyId)).orderBy(desc(trades.createdAt));
+  const rows = await db.select().from(trades)
+    .where(eq(trades.strategyId, strategyId))
+    .orderBy(asc(trades.createdAt));
+
+  return rows.map((row, index) => ({
+    ...row,
+    tradeNumber: index + 1,
+  })).reverse();
 }
 
 export async function getTrade(id: number) {
@@ -14,7 +21,7 @@ export async function getTrade(id: number) {
 
 export async function createTrade(
   strategyId: number,
-  data: { resultR?: string; notes?: string },
+  data: { resultR?: string; notes?: string; pair?: string },
   files?: { openScreenshot?: Express.Multer.File; closeScreenshot?: Express.Multer.File }
 ) {
   let openKey: string | undefined;
@@ -37,13 +44,14 @@ export async function createTrade(
     closeScreenshotUrl: closeKey ? getFileUrl(closeKey) : null,
     resultR: data.resultR || null,
     notes: data.notes || null,
+    pair: data.pair || null,
   }).returning();
   return rows[0];
 }
 
 export async function updateTrade(
   id: number,
-  data: { resultR?: string; notes?: string },
+  data: { resultR?: string; notes?: string; pair?: string },
   files?: { openScreenshot?: Express.Multer.File; closeScreenshot?: Express.Multer.File }
 ) {
   const existing = await getTrade(id);
@@ -75,6 +83,9 @@ export async function updateTrade(
   }
   if (data.notes !== undefined) {
     updateData.notes = data.notes;
+  }
+  if (data.pair !== undefined) {
+    updateData.pair = data.pair;
   }
 
   const rows = await db.update(trades).set(updateData).where(eq(trades.id, id)).returning();

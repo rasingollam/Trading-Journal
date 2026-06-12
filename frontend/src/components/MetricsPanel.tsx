@@ -3,7 +3,7 @@ import type { Metrics } from '../types';
 const styles: Record<string, React.CSSProperties> = {
   container: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '12px',
     marginBottom: '24px',
   },
@@ -11,23 +11,25 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'var(--bg-card)',
     border: '1px solid var(--border)',
     borderRadius: '8px',
-    padding: '16px',
-    textAlign: 'center' as const,
+    padding: '12px 16px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   label: {
     color: 'var(--text-secondary)',
     fontSize: '11px',
     textTransform: 'uppercase' as const,
     letterSpacing: '1px',
-    marginBottom: '8px',
+    flexShrink: 0,
   },
   value: {
     fontFamily: 'var(--font-mono)',
-    fontSize: '22px',
+    fontSize: '16px',
     fontWeight: 'bold',
   },
   skeleton: {
-    height: '80px',
+    height: '48px',
   },
   error: {
     gridColumn: '1 / -1',
@@ -54,7 +56,7 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
   if (isLoading) {
     return (
       <div style={styles.container}>
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="skeleton" style={styles.skeleton} />
         ))}
       </div>
@@ -62,6 +64,11 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
   }
 
   const items = [
+    {
+      label: 'Trades',
+      value: metrics ? String(metrics.tradeCount) : '--',
+      color: 'var(--accent-cyan)',
+    },
     {
       label: 'Win Rate',
       value: metrics ? `${metrics.winRate.toFixed(1)}%` : '--',
@@ -75,7 +82,7 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
         : 'var(--text-secondary)',
     },
     {
-      label: 'Drawdown',
+      label: 'Max DD (R)',
       value: metrics ? metrics.drawdown.toFixed(2) : '--',
       color: 'var(--accent-red)',
     },

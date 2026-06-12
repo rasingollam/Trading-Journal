@@ -1,5 +1,4 @@
-import type { Strategy, EquityPoint } from '../types';
-import Sparkline from './Sparkline';
+import type { Strategy } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
   card: {
@@ -11,12 +10,12 @@ const styles: Record<string, React.CSSProperties> = {
     transition: 'all 0.25s ease',
     display: 'flex',
     flexDirection: 'column',
-    gap: '14px',
   },
   nameRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: '14px',
   },
   name: {
     color: 'var(--accent-gold)',
@@ -35,10 +34,17 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid var(--border)',
   },
   description: {
-    color: 'var(--text-secondary)',
+    color: 'var(--text-primary)',
     fontSize: '13px',
-    lineHeight: '1.5',
-    marginTop: '-6px',
+    lineHeight: '1.6',
+    whiteSpace: 'pre-wrap' as const,
+    background: 'var(--bg-surface)',
+    padding: '12px',
+    borderRadius: '6px',
+    border: '1px solid var(--border)',
+    marginTop: '12px',
+    maxHeight: 'none' as const,
+    overflowY: 'visible' as const,
   },
   divider: {
     height: '1px',
@@ -67,28 +73,29 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '16px',
     fontWeight: 'bold' as const,
   },
-  chartRow: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '8px 0',
-  },
+
   footer: {
     display: 'flex',
     justifyContent: 'flex-end',
     gap: '10px',
-    paddingTop: '4px',
+    marginTop: 'auto',
+    paddingTop: '12px',
   },
-  actionBtn: {
-    background: 'var(--bg-surface)',
+  iconBtn: {
+    width: '36px',
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '8px',
     border: '1px solid var(--border)',
+    background: 'var(--bg-surface)',
     color: 'var(--text-secondary)',
-    padding: '6px 16px',
-    borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '12px',
-    fontWeight: 'bold' as const,
-    letterSpacing: '0.5px',
+    fontSize: '16px',
+    lineHeight: '1',
     transition: 'all 0.2s ease',
+    padding: 0,
   },
   skeleton: {
     height: '20px',
@@ -106,13 +113,12 @@ interface StrategyCardProps {
   profitFactor?: number | null;
   drawdown?: number;
   sharpeRatio?: number | null;
-  equity?: EquityPoint[];
   onEdit: (strategy: Strategy) => void;
   onDelete: (strategy: Strategy) => void;
   onClick: (strategy: Strategy) => void;
 }
 
-export default function StrategyCard({ strategy, winRate, profitFactor, drawdown, sharpeRatio, equity, onEdit, onDelete, onClick }: StrategyCardProps) {
+export default function StrategyCard({ strategy, winRate, profitFactor, drawdown, sharpeRatio, onEdit, onDelete, onClick }: StrategyCardProps) {
   const handleCardClick = () => onClick(strategy);
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -126,7 +132,6 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
   };
 
   const winRateColor = winRate !== undefined ? (winRate > 50 ? 'var(--success)' : winRate > 0 ? 'var(--accent-gold)' : 'var(--text-secondary)') : 'var(--text-secondary)';
-  const eqColor = equity && equity.length > 1 ? (equity[equity.length - 1].value >= 0 ? 'var(--success)' : 'var(--accent-red)') : 'var(--accent-gold)';
 
   return (
     <div
@@ -143,24 +148,22 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
         e.currentTarget.style.transform = 'none';
       }}
     >
-      <div style={styles.name}>{strategy.name}</div>
-      {strategy.description && (
-        <div style={styles.description}>
-          {strategy.description.length > 120
-            ? strategy.description.slice(0, 120) + '...'
-            : strategy.description}
-        </div>
-      )}
+      <div style={styles.nameRow}>
+        <div style={styles.name}>{strategy.name}</div>
+        {strategy.tradeCount !== undefined && (
+          <span style={styles.tradeCount}>{strategy.tradeCount} trades</span>
+        )}
+      </div>
       <div style={styles.divider} />
       <div style={styles.metricsGrid}>
         <div style={styles.metric}>
-          <div style={styles.metricLabel}>Win Rate</div>
+          <div style={styles.metricLabel}>WR</div>
           <div style={{ ...styles.metricValue, color: winRateColor }}>
             {winRate !== undefined ? `${winRate.toFixed(1)}%` : '--'}
           </div>
         </div>
         <div style={styles.metric}>
-          <div style={styles.metricLabel}>Profit Factor</div>
+          <div style={styles.metricLabel}>PF</div>
           <div style={{ ...styles.metricValue, color: profitFactor !== null && profitFactor !== undefined && profitFactor >= 1 ? 'var(--success)' : 'var(--text-primary)' }}>
             {profitFactor !== undefined && profitFactor !== null ? profitFactor.toFixed(2) : '--'}
           </div>
@@ -168,7 +171,7 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
         <div style={styles.metric}>
           <div style={styles.metricLabel}>Drawdown</div>
           <div style={{ ...styles.metricValue, color: 'var(--accent-red)' }}>
-            {drawdown !== undefined ? `${drawdown.toFixed(1)}%` : '--'}
+            {drawdown !== undefined ? drawdown.toFixed(2) : '--'}
           </div>
         </div>
         <div style={styles.metric}>
@@ -178,25 +181,33 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
           </div>
         </div>
       </div>
-      {equity && equity.length > 0 && (
-        <div style={styles.chartRow}>
-          <Sparkline data={equity} color={eqColor} width={140} height={60} />
-        </div>
+      {strategy.description && (
+        <div style={styles.description}>{strategy.description}</div>
       )}
       <div style={styles.footer}>
         <button
-          style={styles.actionBtn}
+          style={styles.iconBtn}
           onClick={handleEdit}
+          title="Edit"
           onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-gold)'; e.currentTarget.style.color = 'var(--accent-gold)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-        >Edit</button>
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+          </svg>
+        </button>
         <button
-          style={styles.actionBtn}
+          style={styles.iconBtn}
           className="btn-danger-outline"
           onClick={handleDelete}
+          title="Delete"
           onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-red)'; e.currentTarget.style.color = 'var(--accent-red)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-        >Delete</button>
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+          </svg>
+        </button>
       </div>
     </div>
   );
@@ -213,7 +224,7 @@ export function StrategyCardSkeleton() {
           <div key={i} style={{ ...styles.skeleton, height: '48px', marginBottom: 0 }} />
         ))}
       </div>
-      <div style={{ ...styles.skeleton, width: '140px', height: '40px', margin: '0 auto' }} />
+
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
         <div style={{ ...styles.skeleton, width: '55px', height: '30px', marginBottom: 0 }} />
         <div style={{ ...styles.skeleton, width: '65px', height: '30px', marginBottom: 0 }} />

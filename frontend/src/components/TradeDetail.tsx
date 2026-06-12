@@ -101,6 +101,9 @@ export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeD
         <button onClick={() => onEdit(trade)}>Edit</button>
         <button className="btn-danger" onClick={() => onDelete(trade)}>Delete</button>
       </div>
+      <h2 style={styles.heading}>
+        Trade #{String(trade.tradeNumber).padStart(3, '0')}
+      </h2>
 
       <div style={styles.imageBox} onClick={() => setFullscreen(trade.openScreenshotUrl)}>
         <img
@@ -131,6 +134,11 @@ export default function TradeDetail({ trade, onEdit, onDelete, onClose }: TradeD
           />
         </div>
       )}
+
+      <div>
+        <div style={styles.label}>Pair</div>
+        <div style={styles.value}>{trade.pair || <span style={{ color: 'var(--text-secondary)' }}>Not specified</span>}</div>
+      </div>
 
       <div>
         <div style={styles.label}>Result</div>

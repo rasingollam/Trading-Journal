@@ -12,7 +12,7 @@ export async function calculateMetrics(strategyId: number) {
     .filter((r: number | null): r is number => r !== null);
 
   if (results.length === 0) {
-    return { winRate: 0, profitFactor: null, drawdown: 0, sharpeRatio: null };
+    return { winRate: 0, profitFactor: null, drawdown: 0, sharpeRatio: null, tradeCount: 0 };
   }
 
   const wins = results.filter((r: number) => r > 0).length;
@@ -28,7 +28,7 @@ export async function calculateMetrics(strategyId: number) {
   for (const r of results) {
     cumulative += r;
     if (cumulative > peak) peak = cumulative;
-    const dd = peak > 0 ? ((peak - cumulative) / peak) * 100 : 0;
+    const dd = peak - cumulative;
     if (dd > maxDrawdown) maxDrawdown = dd;
   }
 
@@ -37,5 +37,5 @@ export async function calculateMetrics(strategyId: number) {
   const std = Math.sqrt(variance);
   const sharpeRatio = std > 0 ? mean / std : null;
 
-  return { winRate, profitFactor, drawdown: maxDrawdown, sharpeRatio };
+  return { winRate, profitFactor, drawdown: maxDrawdown, sharpeRatio, tradeCount: results.length };
 }
