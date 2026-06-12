@@ -35,10 +35,17 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid var(--border)',
   },
   description: {
-    color: 'var(--text-secondary)',
+    color: 'var(--text-primary)',
     fontSize: '13px',
-    lineHeight: '1.5',
-    marginTop: '-6px',
+    lineHeight: '1.6',
+    whiteSpace: 'pre-wrap' as const,
+    background: 'var(--bg-surface)',
+    padding: '12px',
+    borderRadius: '6px',
+    border: '1px solid var(--border)',
+    marginTop: '-4px',
+    maxHeight: 'none' as const,
+    overflowY: 'visible' as const,
   },
   divider: {
     height: '1px',
@@ -150,11 +157,7 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
         )}
       </div>
       {strategy.description && (
-        <div style={styles.description}>
-          {strategy.description.length > 120
-            ? strategy.description.slice(0, 120) + '...'
-            : strategy.description}
-        </div>
+        <div style={styles.description}>{strategy.description}</div>
       )}
       <div style={styles.divider} />
       <div style={styles.metricsGrid}>
