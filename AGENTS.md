@@ -4,7 +4,7 @@
 - Answer concisely onto the point unless user asked otherwise.
 - Always delegate tasks to sub agents.
 - When user asked plan always ask questions to clarify and save the plan in '.opencode\plans' as next.
-- When user asked implement the plan, implement the attached plan end to end, compile code and test for coding bugs, refine then docker build and up the project.
+- When user asked implement the plan, implement the asked plan end to end, compile code and test for coding bugs, refine then docker build and up the project.
 
 ## Project structure
 
