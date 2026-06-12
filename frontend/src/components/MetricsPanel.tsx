@@ -3,7 +3,7 @@ import type { Metrics } from '../types';
 const styles: Record<string, React.CSSProperties> = {
   container: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '12px',
     marginBottom: '24px',
   },
@@ -54,7 +54,7 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
   if (isLoading) {
     return (
       <div style={styles.container}>
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="skeleton" style={styles.skeleton} />
         ))}
       </div>
@@ -62,6 +62,11 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
   }
 
   const items = [
+    {
+      label: 'Trades',
+      value: metrics ? String(metrics.tradeCount) : '--',
+      color: 'var(--accent-cyan)',
+    },
     {
       label: 'Win Rate',
       value: metrics ? `${metrics.winRate.toFixed(1)}%` : '--',

@@ -4,6 +4,7 @@ export interface Strategy {
   description: string | null;
   createdAt: string;
   updatedAt: string;
+  tradeCount?: number;
 }
 
 export interface Trade {
@@ -14,6 +15,7 @@ export interface Trade {
   resultR: string | null;
   notes: string | null;
   pair: string | null;
+  tradeNumber: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,6 +25,7 @@ export interface Metrics {
   profitFactor: number | null;
   drawdown: number;
   sharpeRatio: number | null;
+  tradeCount: number;
 }
 
 export interface EquityPoint {

@@ -1,10 +1,17 @@
-import { eq, desc } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { db } from "../db/connection.js";
 import { trades } from "../db/schema.js";
 import { uploadFile, deleteFile, getFileUrl } from "./storage.js";
 
 export async function listTrades(strategyId: number) {
-  return db.select().from(trades).where(eq(trades.strategyId, strategyId)).orderBy(desc(trades.createdAt));
+  const rows = await db.select().from(trades)
+    .where(eq(trades.strategyId, strategyId))
+    .orderBy(asc(trades.createdAt));
+
+  return rows.map((row, index) => ({
+    ...row,
+    tradeNumber: index + 1,
+  })).reverse();
 }
 
 export async function getTrade(id: number) {

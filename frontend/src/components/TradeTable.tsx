@@ -82,6 +82,9 @@ function TradeTableRow({ trade, onSelect }: { trade: Trade; onSelect: (trade: Tr
       onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-surface)'; }}
       onMouseLeave={(e) => { e.currentTarget.style.background = ''; }}
     >
+      <td style={{ ...styles.td, color: 'var(--text-secondary)', textAlign: 'center', width: '48px' }}>
+        #{String(trade.tradeNumber).padStart(3, '0')}
+      </td>
       <td style={styles.td}>{formatDate(trade.createdAt)}</td>
       <td style={styles.td}>{trade.pair || <span style={{ color: 'var(--text-secondary)' }}>--</span>}</td>
       <td style={{ ...styles.td, color: resultColor }}>
@@ -163,6 +166,7 @@ export default function TradeTable({ trades, onSelect, isLoading, error }: Trade
     <table style={styles.table}>
       <thead>
         <tr>
+          <th style={{ ...styles.th, width: '48px' }}>#</th>
           <th style={styles.th}>Date</th>
           <th style={styles.th}>Pair</th>
           <th style={styles.th}>Result</th>

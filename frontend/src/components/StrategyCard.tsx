@@ -143,7 +143,12 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
         e.currentTarget.style.transform = 'none';
       }}
     >
-      <div style={styles.name}>{strategy.name}</div>
+      <div style={styles.nameRow}>
+        <div style={styles.name}>{strategy.name}</div>
+        {strategy.tradeCount !== undefined && (
+          <span style={styles.tradeCount}>{strategy.tradeCount} trades</span>
+        )}
+      </div>
       {strategy.description && (
         <div style={styles.description}>
           {strategy.description.length > 120
