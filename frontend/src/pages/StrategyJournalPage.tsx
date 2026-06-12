@@ -11,29 +11,31 @@ import { listStrategies } from '../api/strategies';
 import type { Strategy, Trade } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
-  headerRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
+  header: {
     marginBottom: '24px',
   },
+  accentBar: {
+    height: '2px',
+    background: 'linear-gradient(90deg, var(--accent-gold), var(--accent-cyan))',
+    marginBottom: '16px',
+    borderRadius: '1px',
+  },
   backLink: {
+    display: 'inline-block',
     color: 'var(--accent-cyan)',
     fontFamily: 'var(--font-mono)',
-    fontSize: '14px',
-    flexShrink: 0,
+    fontSize: '11px',
+    letterSpacing: '2px',
+    textTransform: 'uppercase' as const,
+    textDecoration: 'none',
+    marginBottom: '8px',
   },
   title: {
-    display: 'block',
     color: 'var(--accent-gold)',
     fontFamily: 'var(--font-mono)',
     fontSize: '20px',
     letterSpacing: '1px',
-  },
-  skeleton: {
-    height: '40px',
-    marginBottom: '24px',
-    width: '50%',
+    display: 'block',
   },
   notFound: {
     textAlign: 'center' as const,
@@ -143,8 +145,9 @@ export default function StrategyJournalPage() {
   if (strategyLoading) {
     return (
       <div>
-        <div className="skeleton" style={{ width: '120px', height: '18px', marginBottom: '16px' }} />
-        <div className="skeleton" style={{ ...styles.skeleton, width: '40%' }} />
+        <div className="skeleton" style={{ ...styles.accentBar }} />
+        <div className="skeleton" style={{ width: '180px', height: '11px', marginBottom: '8px' }} />
+        <div className="skeleton" style={{ width: '40%', height: '20px', marginBottom: '24px' }} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '24px' }}>
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="skeleton" style={{ height: '80px' }} />
@@ -163,7 +166,7 @@ export default function StrategyJournalPage() {
     return (
       <div style={styles.notFound}>
         <h2 style={styles.notFoundTitle}>Strategy not found</h2>
-        <Link to="/" style={styles.backLink}>&larr; Back</Link>
+        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
       </div>
     );
   }
@@ -175,15 +178,18 @@ export default function StrategyJournalPage() {
           <span>{strategyError}</span>
           <button onClick={() => navigate(0)}>Retry</button>
         </div>
-        <Link to="/" style={styles.backLink}>&larr; Back</Link>
+        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
       </div>
     );
   }
 
   return (
     <div>
-      <Link to="/" style={styles.backLink}>&larr; Back</Link>
-      <span style={styles.title}>{strategy?.name || 'Journal'}</span>
+      <div style={styles.header}>
+        <div style={styles.accentBar} />
+        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
+        <span style={styles.title}>{strategy?.name || 'Journal'}</span>
+      </div>
 
       <MetricsPanel
         metrics={metrics}
