@@ -80,7 +80,7 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
         : 'var(--text-secondary)',
     },
     {
-      label: 'Drawdown',
+      label: 'Max DD (R)',
       value: metrics ? metrics.drawdown.toFixed(2) : '--',
       color: 'var(--accent-red)',
     },

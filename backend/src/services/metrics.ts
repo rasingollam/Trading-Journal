@@ -28,7 +28,7 @@ export async function calculateMetrics(strategyId: number) {
   for (const r of results) {
     cumulative += r;
     if (cumulative > peak) peak = cumulative;
-    const dd = peak > 0 ? ((peak - cumulative) / peak) * 100 : 0;
+    const dd = peak - cumulative;
     if (dd > maxDrawdown) maxDrawdown = dd;
   }
 

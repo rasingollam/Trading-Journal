@@ -165,21 +165,21 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
       <div style={styles.divider} />
       <div style={styles.metricsGrid}>
         <div style={styles.metric}>
-          <div style={styles.metricLabel}>Win Rate</div>
+          <div style={styles.metricLabel}>WR</div>
           <div style={{ ...styles.metricValue, color: winRateColor }}>
             {winRate !== undefined ? `${winRate.toFixed(1)}%` : '--'}
           </div>
         </div>
         <div style={styles.metric}>
-          <div style={styles.metricLabel}>Profit Factor</div>
+          <div style={styles.metricLabel}>PF</div>
           <div style={{ ...styles.metricValue, color: profitFactor !== null && profitFactor !== undefined && profitFactor >= 1 ? 'var(--success)' : 'var(--text-primary)' }}>
             {profitFactor !== undefined && profitFactor !== null ? profitFactor.toFixed(2) : '--'}
           </div>
         </div>
         <div style={styles.metric}>
-          <div style={styles.metricLabel}>Drawdown</div>
+          <div style={styles.metricLabel}>Max DD</div>
           <div style={{ ...styles.metricValue, color: 'var(--accent-red)' }}>
-            {drawdown !== undefined ? `${drawdown.toFixed(1)}%` : '--'}
+            {drawdown !== undefined ? drawdown.toFixed(2) : '--'}
           </div>
         </div>
         <div style={styles.metric}>
