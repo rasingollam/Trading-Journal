@@ -1,5 +1,10 @@
 # Trading Journal — AGENTS.md
 
+# Development Instructions
+- Answer concisely onto the point unless user asked otherwise.
+- Always delegate tasks to sub agents.
+- When user asked plan always ask questions to clarify and save the plan in '.opencode\plans' as next.
+
 ## Project structure
 
 ```
