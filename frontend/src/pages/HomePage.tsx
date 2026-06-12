@@ -9,10 +9,21 @@ import type { Strategy } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
   header: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     marginBottom: '24px',
+  },
+  accentBar: {
+    height: '2px',
+    background: 'linear-gradient(90deg, var(--accent-gold), var(--accent-cyan))',
+    marginBottom: '16px',
+    borderRadius: '1px',
+  },
+  systemLabel: {
+    color: 'var(--text-secondary)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '11px',
+    letterSpacing: '2px',
+    textTransform: 'uppercase' as const,
+    marginBottom: '4px',
   },
   title: {
     color: 'var(--accent-gold)',
@@ -80,6 +91,8 @@ export default function HomePage() {
   return (
     <div>
       <div style={styles.header}>
+        <div style={styles.accentBar} />
+        <div style={styles.systemLabel}>■ TRADING JOURNAL</div>
         <h1 style={styles.title}>Strategies</h1>
       </div>
 
