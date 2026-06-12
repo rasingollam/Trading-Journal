@@ -11,12 +11,12 @@ const styles: Record<string, React.CSSProperties> = {
     transition: 'all 0.25s ease',
     display: 'flex',
     flexDirection: 'column',
-    gap: '14px',
   },
   nameRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: '14px',
   },
   name: {
     color: 'var(--accent-gold)',
@@ -43,7 +43,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '12px',
     borderRadius: '6px',
     border: '1px solid var(--border)',
-    marginTop: '-4px',
+    marginTop: '12px',
     maxHeight: 'none' as const,
     overflowY: 'visible' as const,
   },
@@ -78,24 +78,30 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     justifyContent: 'center',
     padding: '8px 0',
+    marginTop: '4px',
   },
   footer: {
     display: 'flex',
     justifyContent: 'flex-end',
     gap: '10px',
-    paddingTop: '4px',
+    marginTop: 'auto',
+    paddingTop: '12px',
   },
-  actionBtn: {
-    background: 'var(--bg-surface)',
+  iconBtn: {
+    width: '36px',
+    height: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '8px',
     border: '1px solid var(--border)',
+    background: 'var(--bg-surface)',
     color: 'var(--text-secondary)',
-    padding: '6px 16px',
-    borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '12px',
-    fontWeight: 'bold' as const,
-    letterSpacing: '0.5px',
+    fontSize: '16px',
+    lineHeight: '1',
     transition: 'all 0.2s ease',
+    padding: 0,
   },
   skeleton: {
     height: '20px',
@@ -156,9 +162,6 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
           <span style={styles.tradeCount}>{strategy.tradeCount} trades</span>
         )}
       </div>
-      {strategy.description && (
-        <div style={styles.description}>{strategy.description}</div>
-      )}
       <div style={styles.divider} />
       <div style={styles.metricsGrid}>
         <div style={styles.metric}>
@@ -186,6 +189,9 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
           </div>
         </div>
       </div>
+      {strategy.description && (
+        <div style={styles.description}>{strategy.description}</div>
+      )}
       {equity && equity.length > 0 && (
         <div style={styles.chartRow}>
           <Sparkline data={equity} color={eqColor} width={140} height={60} />
@@ -193,18 +199,28 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
       )}
       <div style={styles.footer}>
         <button
-          style={styles.actionBtn}
+          style={styles.iconBtn}
           onClick={handleEdit}
+          title="Edit"
           onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-gold)'; e.currentTarget.style.color = 'var(--accent-gold)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-        >Edit</button>
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+          </svg>
+        </button>
         <button
-          style={styles.actionBtn}
+          style={styles.iconBtn}
           className="btn-danger-outline"
           onClick={handleDelete}
+          title="Delete"
           onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-red)'; e.currentTarget.style.color = 'var(--accent-red)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-        >Delete</button>
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+          </svg>
+        </button>
       </div>
     </div>
   );
