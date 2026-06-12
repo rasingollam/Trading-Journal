@@ -4,8 +4,8 @@ import { useStrategies } from '../hooks/useStrategies';
 import StrategyCard, { StrategyCardSkeleton } from '../components/StrategyCard';
 import StrategyDialog from '../components/StrategyDialog';
 import ConfirmDialog from '../components/ConfirmDialog';
-import { getMetrics, getEquity } from '../api/trades';
-import type { Strategy, EquityPoint } from '../types';
+import { getMetrics } from '../api/trades';
+import type { Strategy } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
   header: {
@@ -35,7 +35,6 @@ export default function HomePage() {
   const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
   const [deletingStrategy, setDeletingStrategy] = useState<Strategy | null>(null);
   const [metricsMap, setMetricsMap] = useState<Record<number, { winRate: number; profitFactor: number | null; drawdown: number; sharpeRatio: number | null }>>({});
-  const [equityMap, setEquityMap] = useState<Record<number, EquityPoint[]>>({});
 
   useEffect(() => {
     if (strategies.length > 0) {
@@ -43,11 +42,6 @@ export default function HomePage() {
         getMetrics(s.id)
           .then((m) => {
             setMetricsMap((prev) => ({ ...prev, [s.id]: m }));
-          })
-          .catch(() => {});
-        getEquity(s.id)
-          .then((eq) => {
-            setEquityMap((prev) => ({ ...prev, [s.id]: eq }));
           })
           .catch(() => {});
       });
@@ -122,7 +116,6 @@ export default function HomePage() {
               profitFactor={metricsMap[strategy.id]?.profitFactor}
               drawdown={metricsMap[strategy.id]?.drawdown}
               sharpeRatio={metricsMap[strategy.id]?.sharpeRatio}
-              equity={equityMap[strategy.id]}
               onEdit={openEdit}
               onDelete={setDeletingStrategy}
               onClick={(s) => navigate(`/strategies/${s.id}`)}

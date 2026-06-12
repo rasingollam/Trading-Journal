@@ -1,5 +1,4 @@
-import type { Strategy, EquityPoint } from '../types';
-import Sparkline from './Sparkline';
+import type { Strategy } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
   card: {
@@ -74,12 +73,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '16px',
     fontWeight: 'bold' as const,
   },
-  chartRow: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '8px 0',
-    marginTop: '4px',
-  },
+
   footer: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -119,13 +113,12 @@ interface StrategyCardProps {
   profitFactor?: number | null;
   drawdown?: number;
   sharpeRatio?: number | null;
-  equity?: EquityPoint[];
   onEdit: (strategy: Strategy) => void;
   onDelete: (strategy: Strategy) => void;
   onClick: (strategy: Strategy) => void;
 }
 
-export default function StrategyCard({ strategy, winRate, profitFactor, drawdown, sharpeRatio, equity, onEdit, onDelete, onClick }: StrategyCardProps) {
+export default function StrategyCard({ strategy, winRate, profitFactor, drawdown, sharpeRatio, onEdit, onDelete, onClick }: StrategyCardProps) {
   const handleCardClick = () => onClick(strategy);
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -139,7 +132,6 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
   };
 
   const winRateColor = winRate !== undefined ? (winRate > 50 ? 'var(--success)' : winRate > 0 ? 'var(--accent-gold)' : 'var(--text-secondary)') : 'var(--text-secondary)';
-  const eqColor = equity && equity.length > 1 ? (equity[equity.length - 1].value >= 0 ? 'var(--success)' : 'var(--accent-red)') : 'var(--accent-gold)';
 
   return (
     <div
@@ -192,11 +184,6 @@ export default function StrategyCard({ strategy, winRate, profitFactor, drawdown
       {strategy.description && (
         <div style={styles.description}>{strategy.description}</div>
       )}
-      {equity && equity.length > 0 && (
-        <div style={styles.chartRow}>
-          <Sparkline data={equity} color={eqColor} width={140} height={60} />
-        </div>
-      )}
       <div style={styles.footer}>
         <button
           style={styles.iconBtn}
@@ -237,7 +224,7 @@ export function StrategyCardSkeleton() {
           <div key={i} style={{ ...styles.skeleton, height: '48px', marginBottom: 0 }} />
         ))}
       </div>
-      <div style={{ ...styles.skeleton, width: '140px', height: '40px', margin: '0 auto' }} />
+
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
         <div style={{ ...styles.skeleton, width: '55px', height: '30px', marginBottom: 0 }} />
         <div style={{ ...styles.skeleton, width: '65px', height: '30px', marginBottom: 0 }} />
