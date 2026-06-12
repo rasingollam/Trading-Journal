@@ -52,7 +52,7 @@ export default function StrategyJournalPage() {
   const strategyId = id ? parseInt(id, 10) : undefined;
 
   const { trades, loading: tradesLoading, error: tradesError, createTrade, updateTrade, deleteTrade, refresh: refreshTrades } = useTrades(strategyId);
-  const { metrics, loading: metricsLoading, error: metricsError } = useMetrics(strategyId);
+  const { metrics, loading: metricsLoading, error: metricsError, refresh: refreshMetrics } = useMetrics(strategyId);
 
   const [strategy, setStrategy] = useState<Strategy | null>(null);
   const [strategyLoading, setStrategyLoading] = useState(true);
@@ -119,6 +119,7 @@ export default function StrategyJournalPage() {
       } else {
         await createTrade(formData);
       }
+      await refreshMetrics();
       setTrayOpen(false);
       setEditingTrade(null);
       setSelectedTrade(null);
@@ -132,6 +133,7 @@ export default function StrategyJournalPage() {
   const handleDeleteTrade = async () => {
     if (!deletingTrade || strategyId === undefined) return;
     await deleteTrade(deletingTrade.id);
+    await refreshMetrics();
     setDeletingTrade(null);
     setTrayOpen(false);
     setSelectedTrade(null);
