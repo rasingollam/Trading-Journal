@@ -26,6 +26,7 @@ export interface Metrics {
   drawdown: number;
   sharpeRatio: number | null;
   tradeCount: number;
+  balanceR: number;
 }
 
 export interface EquityPoint {

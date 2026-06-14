@@ -12,7 +12,7 @@ export async function calculateMetrics(strategyId: number) {
     .filter((r: number | null): r is number => r !== null);
 
   if (results.length === 0) {
-    return { winRate: 0, profitFactor: null, drawdown: 0, sharpeRatio: null, tradeCount: 0 };
+    return { winRate: 0, profitFactor: null, drawdown: 0, sharpeRatio: null, tradeCount: 0, balanceR: 0 };
   }
 
   const wins = results.filter((r: number) => r > 0).length;
@@ -32,10 +32,11 @@ export async function calculateMetrics(strategyId: number) {
     if (dd > maxDrawdown) maxDrawdown = dd;
   }
 
-  const mean = results.reduce((s: number, r: number) => s + r, 0) / results.length;
+  const balanceR = results.reduce((s: number, r: number) => s + r, 0);
+  const mean = balanceR / results.length;
   const variance = results.reduce((s: number, r: number) => s + (r - mean) ** 2, 0) / results.length;
   const std = Math.sqrt(variance);
   const sharpeRatio = std > 0 ? mean / std : null;
 
-  return { winRate, profitFactor, drawdown: maxDrawdown, sharpeRatio, tradeCount: results.length };
+  return { winRate, profitFactor, drawdown: maxDrawdown, sharpeRatio, tradeCount: results.length, balanceR };
 }
