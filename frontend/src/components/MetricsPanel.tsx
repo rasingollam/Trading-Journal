@@ -3,7 +3,7 @@ import type { Metrics } from '../types';
 const styles: Record<string, React.CSSProperties> = {
   container: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
+    gridTemplateColumns: 'repeat(6, 1fr)',
     gap: '12px',
     marginBottom: '24px',
   },
@@ -56,7 +56,7 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
   if (isLoading) {
     return (
       <div style={styles.container}>
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="skeleton" style={styles.skeleton} />
         ))}
       </div>
@@ -91,6 +91,13 @@ export default function MetricsPanel({ metrics, isLoading, error }: MetricsPanel
       value: metrics?.sharpeRatio !== null && metrics?.sharpeRatio !== undefined ? metrics.sharpeRatio.toFixed(2) : '--',
       color: metrics?.sharpeRatio !== null && metrics?.sharpeRatio !== undefined
         ? (metrics.sharpeRatio > 1 ? 'var(--success)' : 'var(--accent-gold)')
+        : 'var(--text-secondary)',
+    },
+    {
+      label: 'Balance (R)',
+      value: metrics ? metrics.balanceR.toFixed(2) : '--',
+      color: metrics
+        ? (metrics.balanceR > 0 ? 'var(--success)' : metrics.balanceR < 0 ? 'var(--accent-red)' : 'var(--accent-gold)')
         : 'var(--text-secondary)',
     },
   ];
