@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useTrades, useMetrics } from '../hooks/useTrades';
+import { useTrades, useMetrics, useEquity } from '../hooks/useTrades';
 import MetricsPanel from '../components/MetricsPanel';
+import AnalyticsPanel from '../components/AnalyticsPanel';
 import TradeTable from '../components/TradeTable';
 import TradeForm from '../components/TradeForm';
 import TradeDetail from '../components/TradeDetail';
@@ -20,6 +21,11 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: '16px',
     borderRadius: '1px',
   },
+  titleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   backLink: {
     display: 'inline-block',
     color: 'var(--accent-cyan)',
@@ -35,7 +41,28 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: 'var(--font-mono)',
     fontSize: '20px',
     letterSpacing: '1px',
-    display: 'block',
+  },
+  tabs: {
+    display: 'flex',
+    gap: '4px',
+  },
+  tab: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '11px',
+    letterSpacing: '1px',
+    textTransform: 'uppercase' as const,
+    padding: '6px 16px',
+    borderRadius: '16px',
+    border: '1px solid var(--border)',
+    background: 'transparent',
+    color: 'var(--text-secondary)',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  },
+  tabActive: {
+    background: 'var(--accent-gold)',
+    color: 'var(--bg-primary)',
+    borderColor: 'var(--accent-gold)',
   },
   notFound: {
     textAlign: 'center' as const,
@@ -67,6 +94,9 @@ export default function StrategyJournalPage() {
   const [formSaving, setFormSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [deletingTrade, setDeletingTrade] = useState<Trade | null>(null);
+  const [activeTab, setActiveTab] = useState<'journal' | 'analytics'>('journal');
+
+  const { equity, loading: equityLoading } = useEquity(strategyId);
 
   useEffect(() => {
     if (strategyId === undefined) return;
@@ -188,7 +218,23 @@ export default function StrategyJournalPage() {
       <div style={styles.header}>
         <div style={styles.accentBar} />
         <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
-        <span style={styles.title}>{strategy?.name || 'Journal'}</span>
+        <div style={styles.titleRow}>
+          <span style={styles.title}>{strategy?.name || 'Journal'}</span>
+          <div style={styles.tabs}>
+            <button
+              style={{ ...styles.tab, ...(activeTab === 'journal' ? styles.tabActive : {}) }}
+              onClick={() => setActiveTab('journal')}
+            >
+              Journal
+            </button>
+            <button
+              style={{ ...styles.tab, ...(activeTab === 'analytics' ? styles.tabActive : {}) }}
+              onClick={() => setActiveTab('analytics')}
+            >
+              Analytics
+            </button>
+          </div>
+        </div>
       </div>
 
       <MetricsPanel
@@ -197,16 +243,28 @@ export default function StrategyJournalPage() {
         error={metricsError}
       />
 
-      <TradeTable
-        trades={trades}
-        onSelect={openTradeDetail}
-        isLoading={tradesLoading}
-        error={tradesError}
-      />
+      {activeTab === 'journal' ? (
+        <>
+          <TradeTable
+            trades={trades}
+            onSelect={openTradeDetail}
+            isLoading={tradesLoading}
+            error={tradesError}
+          />
 
-      <button className="fab" onClick={openAddTrade} title="Add trade">
-        +
-      </button>
+          <button className="fab" onClick={openAddTrade} title="Add trade">
+            +
+          </button>
+        </>
+      ) : (
+        <AnalyticsPanel
+          trades={trades}
+          metrics={metrics}
+          equity={equity}
+          metricsLoading={metricsLoading}
+          equityLoading={equityLoading}
+        />
+      )}
 
       <SideTray isOpen={trayOpen} onClose={() => setTrayOpen(false)}>
         {trayMode === 'detail' && selectedTrade && (

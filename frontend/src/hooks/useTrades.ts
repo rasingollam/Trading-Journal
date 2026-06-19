@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import * as tradesApi from '../api/trades';
-import type { Trade, Metrics } from '../types';
+import type { Trade, Metrics, EquityPoint } from '../types';
 
 export function useTrades(strategyId: number | undefined) {
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -68,4 +68,29 @@ export function useMetrics(strategyId: number | undefined) {
   }, [refresh]);
 
   return { metrics, loading, error, refresh };
+}
+
+export function useEquity(strategyId: number | undefined) {
+  const [equity, setEquity] = useState<EquityPoint[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(() => {
+    if (strategyId === undefined) return;
+    setLoading(true);
+    setError(null);
+    tradesApi
+      .getEquity(strategyId)
+      .then(setEquity)
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Failed to load equity');
+      })
+      .finally(() => setLoading(false));
+  }, [strategyId]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  return { equity, loading, error, refresh };
 }
