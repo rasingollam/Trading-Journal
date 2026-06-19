@@ -1,7 +1,10 @@
+import { asc, eq } from "drizzle-orm";
 import { Router } from "express";
 import * as tradesService from "../services/trades.js";
 import { calculateMetrics } from "../services/metrics.js";
 import { upload } from "../middleware/upload.js";
+import { db } from "../db/connection.js";
+import { trades } from "../db/schema.js";
 
 type TradeParams = { strategyId: string; tradeId: string };
 
@@ -42,13 +45,19 @@ router.get("/equity", async (req, res, next) => {
       res.status(400).json({ error: "Invalid strategyId" });
       return;
     }
-    const rows = await tradesService.listTrades(strategyId);
+    const rows = await db.select().from(trades)
+      .where(eq(trades.strategyId, strategyId))
+      .orderBy(asc(trades.createdAt));
     let cumR = 0;
-    const equity: { index: number; value: number }[] = [];
+    const equity: { index: number; value: number; date: string }[] = [];
     for (const t of rows) {
       if (t.resultR !== null) {
-        cumR += parseFloat(t.resultR);
-        equity.push({ index: equity.length + 1, value: Math.round(cumR * 100) / 100 });
+        const r = parseFloat(t.resultR);
+        if (isNaN(r)) continue;
+        cumR += r;
+        const d = t.createdAt ? new Date(t.createdAt) : new Date();
+        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        equity.push({ index: equity.length + 1, value: Math.round(cumR * 100) / 100, date: dateStr });
       }
     }
     res.json(equity);

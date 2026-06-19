@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useTrades, useMetrics } from '../hooks/useTrades';
-import MetricsPanel from '../components/MetricsPanel';
+import { useTrades, useMetrics, useEquity } from '../hooks/useTrades';
+import AnalyticsPanel from '../components/AnalyticsPanel';
 import TradeTable from '../components/TradeTable';
 import TradeForm from '../components/TradeForm';
 import TradeDetail from '../components/TradeDetail';
@@ -20,22 +20,44 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: '16px',
     borderRadius: '1px',
   },
-  backLink: {
-    display: 'inline-block',
+  titleRow: {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '12px',
+  },
+  backArrow: {
     color: 'var(--accent-cyan)',
     fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    letterSpacing: '2px',
-    textTransform: 'uppercase' as const,
+    fontSize: '16px',
     textDecoration: 'none',
-    marginBottom: '8px',
+    lineHeight: 1,
   },
   title: {
     color: 'var(--accent-gold)',
     fontFamily: 'var(--font-mono)',
     fontSize: '20px',
     letterSpacing: '1px',
-    display: 'block',
+  },
+  tabSeparator: {
+    color: 'var(--text-secondary)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '16px',
+    opacity: 0.5,
+  },
+  tabToggle: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '13px',
+    letterSpacing: '1px',
+    textTransform: 'uppercase' as const,
+    background: 'none',
+    border: 'none',
+    color: 'var(--accent-cyan)',
+    cursor: 'pointer',
+    padding: 0,
+    textDecoration: 'underline',
+    textUnderlineOffset: '3px',
+    textDecorationColor: 'var(--border)',
+    transition: 'color 0.2s ease',
   },
   notFound: {
     textAlign: 'center' as const,
@@ -67,6 +89,9 @@ export default function StrategyJournalPage() {
   const [formSaving, setFormSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [deletingTrade, setDeletingTrade] = useState<Trade | null>(null);
+  const [activeTab, setActiveTab] = useState<'journal' | 'analytics'>('journal');
+
+  const { equity, loading: equityLoading } = useEquity(strategyId);
 
   useEffect(() => {
     if (strategyId === undefined) return;
@@ -166,7 +191,7 @@ export default function StrategyJournalPage() {
     return (
       <div style={styles.notFound}>
         <h2 style={styles.notFoundTitle}>Strategy not found</h2>
-        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
+        <Link to="/" style={styles.backArrow}>&larr;</Link>
       </div>
     );
   }
@@ -178,35 +203,53 @@ export default function StrategyJournalPage() {
           <span>{strategyError}</span>
           <button onClick={() => navigate(0)}>Retry</button>
         </div>
-        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
+        <Link to="/" style={styles.backArrow}>&larr;</Link>
       </div>
     );
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
       <div style={styles.header}>
         <div style={styles.accentBar} />
-        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
-        <span style={styles.title}>{strategy?.name || 'Journal'}</span>
+        <div style={styles.titleRow}>
+          <Link to="/" style={styles.backArrow}>&larr;</Link>
+          <span style={styles.tabSeparator}>|</span>
+          <span style={styles.title}>{strategy?.name || 'Journal'}</span>
+          <span style={styles.tabSeparator}>|</span>
+          <button
+            style={styles.tabToggle}
+            onClick={() => setActiveTab(activeTab === 'journal' ? 'analytics' : 'journal')}
+          >
+            {activeTab === 'journal' ? 'Analytics' : 'Journal'}
+          </button>
+        </div>
       </div>
 
-      <MetricsPanel
-        metrics={metrics}
-        isLoading={metricsLoading}
-        error={metricsError}
-      />
+      <div style={{ flex: activeTab === 'analytics' ? 1 : undefined, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        {activeTab === 'journal' ? (
+          <>
+            <TradeTable
+              trades={trades}
+              onSelect={openTradeDetail}
+              isLoading={tradesLoading}
+              error={tradesError}
+            />
 
-      <TradeTable
-        trades={trades}
-        onSelect={openTradeDetail}
-        isLoading={tradesLoading}
-        error={tradesError}
-      />
-
-      <button className="fab" onClick={openAddTrade} title="Add trade">
-        +
-      </button>
+            <button className="fab" onClick={openAddTrade} title="Add trade">
+              +
+            </button>
+          </>
+        ) : (
+          <AnalyticsPanel
+            trades={trades}
+            metrics={metrics}
+            equity={equity}
+            metricsLoading={metricsLoading}
+            equityLoading={equityLoading}
+          />
+        )}
+      </div>
 
       <SideTray isOpen={trayOpen} onClose={() => setTrayOpen(false)}>
         {trayMode === 'detail' && selectedTrade && (
