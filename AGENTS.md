@@ -6,6 +6,7 @@
 - When user asked plan always ask questions to clarify and save the plan in '.opencode\plans' as next.
 - When user asked implement the plan, implement the asked plan end to end, compile code and test for coding bugs, refine then docker build and up the project.
 - when user asked implement plan 0** then search the '.opencode\plans' 0**-*
+- dont run local builds for the backend and frontend only build in docker. use complings to check codes compling issues.
 
 ## Project structure
 

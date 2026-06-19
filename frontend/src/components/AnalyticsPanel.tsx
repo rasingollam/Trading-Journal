@@ -170,9 +170,10 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
     { label: 'Net P&L', value: `${metrics.balanceR > 0 ? '+' : ''}${metrics.balanceR.toFixed(2)}R`, key: 'balanceR' },
   ] : [];
 
-  const equityData = equity.map((pt) => ({
-    date: pt.date,
+  const equityData = equity.map((pt, i) => ({
+    idx: i,
     equity: pt.value,
+    date: pt.date,
   }));
 
   const statItems = [
@@ -215,10 +216,13 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
                 <LineChart data={equityData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                   <XAxis
-                    dataKey="date"
+                    dataKey="idx"
+                    domain={[0, Math.max(1, equityData.length - 1)]}
+                    tickFormatter={(idx) => equityData[idx]?.date || ''}
                     tick={{ fill: 'var(--text-secondary)', fontSize: 10 }}
                     stroke="var(--border)"
-                    interval="preserveStartEnd"
+                    type="number"
+                    ticks={[0, equityData.length - 1]}
                   />
                   <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} stroke="var(--border)" />
                   <Tooltip
@@ -228,10 +232,10 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
                       borderRadius: '4px',
                       fontSize: '12px',
                     }}
-                    labelStyle={{ color: 'var(--text-secondary)' }}
-                    formatter={(value) => [Number(value).toFixed(2) + 'R', 'Equity']}
+                    labelFormatter={(idx) => equityData[idx]?.date || ''}
+                    formatter={(value) => Number(value).toFixed(2) + 'R'}
                   />
-                  <Line type="monotone" dataKey="equity" stroke="var(--accent-gold)" strokeWidth={2} dot={{ r: 4, strokeWidth: 0, fill: 'var(--accent-gold)' }} />
+                  <Line type="linear" dataKey="equity" stroke="var(--accent-gold)" strokeWidth={2} dot={{ r: 4, strokeWidth: 0, fill: 'var(--accent-gold)' }} />
                 </LineChart>
               </ResponsiveContainer>
             )}
