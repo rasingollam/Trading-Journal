@@ -241,15 +241,7 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
                     labelStyle={{ color: 'var(--text-secondary)' }}
                     formatter={(value) => [Number(value).toFixed(2) + 'R', 'Equity']}
                   />
-                  <Line type="monotone" dataKey="equity" stroke="var(--accent-gold)" strokeWidth={2} dot={false} />
-                  <Line
-                    type="monotone"
-                    dataKey="equity"
-                    stroke="none"
-                    dot={{ r: 4, strokeWidth: 0, fill: 'var(--accent-gold)' }}
-                    activeDot={false}
-                    isAnimationActive={false}
-                  />
+                  <Line type="monotone" dataKey="equity" stroke="var(--accent-gold)" strokeWidth={2} dot={{ r: 4, strokeWidth: 0, fill: 'var(--accent-gold)' }} />
                 </LineChart>
               </ResponsiveContainer>
             )}
