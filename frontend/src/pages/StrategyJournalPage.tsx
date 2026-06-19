@@ -224,7 +224,7 @@ export default function StrategyJournalPage() {
             style={styles.tabToggle}
             onClick={() => setActiveTab(activeTab === 'journal' ? 'analytics' : 'journal')}
           >
-            {activeTab === 'journal' ? '(Analytics)' : '(Journal)'}
+            {activeTab === 'journal' ? 'Analytics' : 'Journal'}
           </button>
         </div>
       </div>

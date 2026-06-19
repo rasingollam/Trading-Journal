@@ -272,8 +272,13 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
                     fontSize: '12px',
                   }}
                   labelStyle={{ color: 'var(--text-secondary)' }}
+                  itemStyle={{ color: 'var(--text-secondary)' }}
+                  cursor={{ fill: 'rgba(255,255,255,0.08)' }}
                 />
-                <Bar dataKey="count" radius={[3, 3, 0, 0]}>
+                <Bar dataKey="count" radius={[3, 3, 0, 0]} activeBar={(props: { index: number }) => {
+                  const { index, ...rest } = props;
+                  return <rect {...rest} fill={stats.rDistData[index]?.fill || 'var(--success)'} />;
+                }}>
                   {stats.rDistData.map((entry, index) => (
                     <Cell key={index} fill={entry.fill} />
                   ))}
