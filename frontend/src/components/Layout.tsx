@@ -4,6 +4,8 @@ const styles: Record<string, React.CSSProperties> = {
   main: {
     minHeight: '100vh',
     padding: '24px',
+    display: 'flex',
+    flexDirection: 'column',
   },
 };
 

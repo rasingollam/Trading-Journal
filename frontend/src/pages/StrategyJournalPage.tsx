@@ -214,7 +214,7 @@ export default function StrategyJournalPage() {
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
       <div style={styles.header}>
         <div style={styles.accentBar} />
         <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
@@ -237,34 +237,38 @@ export default function StrategyJournalPage() {
         </div>
       </div>
 
-      <MetricsPanel
-        metrics={metrics}
-        isLoading={metricsLoading}
-        error={metricsError}
-      />
-
-      {activeTab === 'journal' ? (
-        <>
-          <TradeTable
-            trades={trades}
-            onSelect={openTradeDetail}
-            isLoading={tradesLoading}
-            error={tradesError}
+      <div style={{ flex: activeTab === 'analytics' ? 1 : undefined, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        {activeTab === 'journal' && (
+          <MetricsPanel
+            metrics={metrics}
+            isLoading={metricsLoading}
+            error={metricsError}
           />
+        )}
 
-          <button className="fab" onClick={openAddTrade} title="Add trade">
-            +
-          </button>
-        </>
-      ) : (
-        <AnalyticsPanel
-          trades={trades}
-          metrics={metrics}
-          equity={equity}
-          metricsLoading={metricsLoading}
-          equityLoading={equityLoading}
-        />
-      )}
+        {activeTab === 'journal' ? (
+          <>
+            <TradeTable
+              trades={trades}
+              onSelect={openTradeDetail}
+              isLoading={tradesLoading}
+              error={tradesError}
+            />
+
+            <button className="fab" onClick={openAddTrade} title="Add trade">
+              +
+            </button>
+          </>
+        ) : (
+          <AnalyticsPanel
+            trades={trades}
+            metrics={metrics}
+            equity={equity}
+            metricsLoading={metricsLoading}
+            equityLoading={equityLoading}
+          />
+        )}
+      </div>
 
       <SideTray isOpen={trayOpen} onClose={() => setTrayOpen(false)}>
         {trayMode === 'detail' && selectedTrade && (

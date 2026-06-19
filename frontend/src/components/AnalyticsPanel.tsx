@@ -8,12 +8,15 @@ const styles: Record<string, React.CSSProperties> = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    flex: 1,
+    minHeight: 0,
+    gap: '12px',
   },
   metricsRow: {
     display: 'grid',
     gridTemplateColumns: 'repeat(6, 1fr)',
     gap: '8px',
+    flexShrink: 0,
   },
   metricCard: {
     background: 'var(--bg-card)',
@@ -39,12 +42,16 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: '16px',
+    flex: 1,
+    minHeight: 0,
   },
   chartCard: {
     background: 'var(--bg-card)',
     border: '1px solid var(--border)',
     borderRadius: '8px',
     padding: '16px',
+    display: 'flex',
+    flexDirection: 'column',
   },
   chartTitle: {
     color: 'var(--text-secondary)',
@@ -52,31 +59,39 @@ const styles: Record<string, React.CSSProperties> = {
     textTransform: 'uppercase' as const,
     letterSpacing: '1px',
     marginBottom: '12px',
+    flexShrink: 0,
   },
   chartWrapper: {
     width: '100%',
-    height: '200px',
+    flex: 1,
+    minHeight: 0,
   },
   statsRow: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
     gap: '8px',
-    flexWrap: 'wrap' as const,
+    flexShrink: 0,
   },
   statPill: {
     background: 'var(--bg-card)',
     border: '1px solid var(--border)',
     borderRadius: '4px',
-    padding: '6px 12px',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '12px',
-    whiteSpace: 'nowrap' as const,
+    padding: '8px 12px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '2px',
   },
   statLabel: {
     color: 'var(--text-secondary)',
-    fontSize: '10px',
+    fontSize: '9px',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.5px',
-    marginRight: '6px',
+  },
+  statValue: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '13px',
+    fontWeight: 'bold',
   },
 };
 
@@ -122,8 +137,7 @@ function computeStats(trades: Trade[]) {
     else { conW = 0; conL = 0; }
   }
 
-  const bins = [-3, -1, 0, 1, 3];
-  const binLabels = ['<-2', '-2--1', '-1-0', '0-1', '1-2', '2-3', '>3'];
+  const binLabels = ['<-2', '-2~-1', '-1~0', '0~1', '1~2', '2~3', '>3'];
   const distribution = Array(7).fill(0);
   for (const v of rValues) {
     if (v < -2) distribution[0]++;
@@ -144,6 +158,11 @@ function computeStats(trades: Trade[]) {
   return { avgWin, avgLoss, bestTrade, worstTrade, winLossRatio, maxConW, maxConL, rDistData };
 }
 
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading, equityLoading }: AnalyticsPanelProps) {
   const stats = computeStats(trades);
 
@@ -156,7 +175,27 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
     { label: 'Net P&L', value: `${metrics.balanceR > 0 ? '+' : ''}${metrics.balanceR.toFixed(2)}R`, key: 'balanceR' },
   ] : [];
 
-  const equityData = equity.map((pt) => ({ index: pt.index, equity: pt.value }));
+  const sortedTrades = [...trades]
+    .filter((t) => t.resultR !== null && !isNaN(parseFloat(t.resultR)))
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+  const equityData = equity.map((pt, i) => ({
+    date: sortedTrades[i] ? formatDate(sortedTrades[i].createdAt) : String(pt.index),
+    equity: pt.value,
+    resultR: sortedTrades[i] ? parseFloat(sortedTrades[i].resultR!) : 0,
+  }));
+
+  const equityDotColor = (r: number) => r >= 0 ? 'var(--success)' : 'var(--accent-red)';
+
+  const statItems = [
+    { label: 'Avg Win', value: `+${stats.avgWin.toFixed(2)}R`, color: 'var(--success)' },
+    { label: 'Avg Loss', value: `${stats.avgLoss.toFixed(2)}R`, color: 'var(--accent-red)' },
+    { label: 'W/L Ratio', value: stats.winLossRatio === Infinity ? '∞' : stats.winLossRatio.toFixed(2), color: 'var(--accent-cyan)' },
+    { label: 'Best', value: `+${stats.bestTrade.toFixed(2)}R`, color: 'var(--success)' },
+    { label: 'Worst', value: `${stats.worstTrade.toFixed(2)}R`, color: 'var(--accent-red)' },
+    { label: 'Con W', value: String(stats.maxConW), color: 'var(--success)' },
+    { label: 'Con L', value: String(stats.maxConL), color: 'var(--accent-red)' },
+  ];
 
   return (
     <div style={styles.container}>
@@ -182,12 +221,17 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
           <div style={styles.chartTitle}>Equity Curve</div>
           <div style={styles.chartWrapper}>
             {equityLoading ? (
-              <div className="skeleton" style={{ width: '100%', height: '200px', borderRadius: '4px' }} />
+              <div className="skeleton" style={{ width: '100%', height: '100%', borderRadius: '4px' }} />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={equityData}>
+                <LineChart data={equityData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="index" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} stroke="var(--border)" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fill: 'var(--text-secondary)', fontSize: 10 }}
+                    stroke="var(--border)"
+                    interval="preserveStartEnd"
+                  />
                   <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} stroke="var(--border)" />
                   <Tooltip
                     contentStyle={{
@@ -197,9 +241,17 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
                       fontSize: '12px',
                     }}
                     labelStyle={{ color: 'var(--text-secondary)' }}
-                    itemStyle={{ color: 'var(--accent-gold)' }}
+                    formatter={(value) => [Number(value).toFixed(2) + 'R', 'Equity']}
                   />
-                  <Line type="monotone" dataKey="equity" stroke="var(--accent-gold)" dot={false} strokeWidth={2} />
+                  <Line type="monotone" dataKey="equity" stroke="var(--accent-gold)" strokeWidth={2} dot={false} />
+                  <Line
+                    type="monotone"
+                    dataKey="equity"
+                    stroke="none"
+                    dot={{ r: 4, strokeWidth: 0, fill: 'var(--accent-gold)' }}
+                    activeDot={false}
+                    isAnimationActive={false}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -210,9 +262,9 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
           <div style={styles.chartTitle}>R-Distribution</div>
           <div style={styles.chartWrapper}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.rDistData}>
+              <BarChart data={stats.rDistData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 10 }} stroke="var(--border)" />
+                <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 9 }} stroke="var(--border)" />
                 <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} stroke="var(--border)" allowDecimals={false} />
                 <Tooltip
                   contentStyle={{
@@ -222,7 +274,6 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
                     fontSize: '12px',
                   }}
                   labelStyle={{ color: 'var(--text-secondary)' }}
-                  itemStyle={{ color: 'var(--accent-gold)' }}
                 />
                 <Bar dataKey="count" radius={[3, 3, 0, 0]}>
                   {stats.rDistData.map((entry, index) => (
@@ -236,27 +287,12 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
       </div>
 
       <div style={styles.statsRow}>
-        <span style={{ ...styles.statPill, color: 'var(--success)' }}>
-          <span style={styles.statLabel}>Avg Win</span>+{stats.avgWin.toFixed(2)}R
-        </span>
-        <span style={{ ...styles.statPill, color: 'var(--accent-red)' }}>
-          <span style={styles.statLabel}>Avg Loss</span>{stats.avgLoss.toFixed(2)}R
-        </span>
-        <span style={styles.statPill}>
-          <span style={styles.statLabel}>W/L Ratio</span>{stats.winLossRatio === Infinity ? '∞' : stats.winLossRatio.toFixed(2)}
-        </span>
-        <span style={{ ...styles.statPill, color: 'var(--success)' }}>
-          <span style={styles.statLabel}>Best</span>+{stats.bestTrade.toFixed(2)}R
-        </span>
-        <span style={{ ...styles.statPill, color: 'var(--accent-red)' }}>
-          <span style={styles.statLabel}>Worst</span>{stats.worstTrade.toFixed(2)}R
-        </span>
-        <span style={styles.statPill}>
-          <span style={styles.statLabel}>Con W</span>{stats.maxConW}
-        </span>
-        <span style={styles.statPill}>
-          <span style={styles.statLabel}>Con L</span>{stats.maxConL}
-        </span>
+        {statItems.map((item) => (
+          <div key={item.label} style={styles.statPill}>
+            <span style={styles.statLabel}>{item.label}</span>
+            <span style={{ ...styles.statValue, color: item.color }}>{item.value}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
