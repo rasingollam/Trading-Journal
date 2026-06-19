@@ -25,15 +25,12 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'baseline',
     gap: '12px',
   },
-  backLink: {
-    display: 'inline-block',
+  backArrow: {
     color: 'var(--accent-cyan)',
     fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
-    letterSpacing: '2px',
-    textTransform: 'uppercase' as const,
+    fontSize: '16px',
     textDecoration: 'none',
-    marginBottom: '8px',
+    lineHeight: 1,
   },
   title: {
     color: 'var(--accent-gold)',
@@ -194,7 +191,7 @@ export default function StrategyJournalPage() {
     return (
       <div style={styles.notFound}>
         <h2 style={styles.notFoundTitle}>Strategy not found</h2>
-        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
+        <Link to="/" style={styles.backArrow}>&larr;</Link>
       </div>
     );
   }
@@ -206,7 +203,7 @@ export default function StrategyJournalPage() {
           <span>{strategyError}</span>
           <button onClick={() => navigate(0)}>Retry</button>
         </div>
-        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
+        <Link to="/" style={styles.backArrow}>&larr;</Link>
       </div>
     );
   }
@@ -215,8 +212,9 @@ export default function StrategyJournalPage() {
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
       <div style={styles.header}>
         <div style={styles.accentBar} />
-        <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
         <div style={styles.titleRow}>
+          <Link to="/" style={styles.backArrow}>&larr;</Link>
+          <span style={styles.tabSeparator}>|</span>
           <span style={styles.title}>{strategy?.name || 'Journal'}</span>
           <span style={styles.tabSeparator}>|</span>
           <button
