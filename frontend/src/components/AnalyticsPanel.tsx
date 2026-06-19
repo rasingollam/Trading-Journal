@@ -222,7 +222,12 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
                     tick={{ fill: 'var(--text-secondary)', fontSize: 10 }}
                     stroke="var(--border)"
                     type="number"
-                    ticks={[0, equityData.length - 1]}
+                    ticks={(() => {
+                      const len = equityData.length;
+                      if (len <= 6) return Array.from({ length: len }, (_, i) => i);
+                      const step = Math.max(1, Math.floor((len - 1) / 5));
+                      return Array.from({ length: Math.min(6, len) }, (_, i) => Math.min(i * step, len - 1));
+                    })()}
                   />
                   <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} stroke="var(--border)" />
                   <Tooltip
