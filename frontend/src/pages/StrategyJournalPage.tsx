@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTrades, useMetrics, useEquity } from '../hooks/useTrades';
-import MetricsPanel from '../components/MetricsPanel';
 import AnalyticsPanel from '../components/AnalyticsPanel';
 import TradeTable from '../components/TradeTable';
 import TradeForm from '../components/TradeForm';
@@ -230,14 +229,6 @@ export default function StrategyJournalPage() {
       </div>
 
       <div style={{ flex: activeTab === 'analytics' ? 1 : undefined, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        {activeTab === 'journal' && (
-          <MetricsPanel
-            metrics={metrics}
-            isLoading={metricsLoading}
-            error={metricsError}
-          />
-        )}
-
         {activeTab === 'journal' ? (
           <>
             <TradeTable
