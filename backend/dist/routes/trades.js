@@ -48,8 +48,13 @@ router.get("/equity", async (req, res, next) => {
         const equity = [];
         for (const t of rows) {
             if (t.resultR !== null) {
-                cumR += parseFloat(t.resultR);
-                equity.push({ index: equity.length + 1, value: Math.round(cumR * 100) / 100 });
+                const r = parseFloat(t.resultR);
+                if (isNaN(r))
+                    continue;
+                cumR += r;
+                const d = t.createdAt ? new Date(t.createdAt) : new Date();
+                const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                equity.push({ index: equity.length + 1, value: Math.round(cumR * 100) / 100, date: dateStr });
             }
         }
         res.json(equity);

@@ -158,11 +158,6 @@ function computeStats(trades: Trade[]) {
   return { avgWin, avgLoss, bestTrade, worstTrade, winLossRatio, maxConW, maxConL, rDistData };
 }
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
 export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading, equityLoading }: AnalyticsPanelProps) {
   const stats = computeStats(trades);
 
@@ -175,14 +170,9 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
     { label: 'Net P&L', value: `${metrics.balanceR > 0 ? '+' : ''}${metrics.balanceR.toFixed(2)}R`, key: 'balanceR' },
   ] : [];
 
-  const sortedTrades = [...trades]
-    .filter((t) => t.resultR !== null && !isNaN(parseFloat(t.resultR)))
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-
-  const equityData = equity.map((pt, i) => ({
-    date: sortedTrades[i] ? formatDate(sortedTrades[i].createdAt) : String(pt.index),
+  const equityData = equity.map((pt) => ({
+    date: pt.date,
     equity: pt.value,
-    resultR: sortedTrades[i] ? parseFloat(sortedTrades[i].resultR!) : 0,
   }));
 
   const statItems = [

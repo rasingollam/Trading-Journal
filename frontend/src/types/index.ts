@@ -32,4 +32,5 @@ export interface Metrics {
 export interface EquityPoint {
   index: number;
   value: number;
+  date: string;
 }
