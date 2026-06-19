@@ -23,8 +23,8 @@ const styles: Record<string, React.CSSProperties> = {
   },
   titleRow: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    gap: '12px',
   },
   backLink: {
     display: 'inline-block',
@@ -42,27 +42,26 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '20px',
     letterSpacing: '1px',
   },
-  tabs: {
-    display: 'flex',
-    gap: '4px',
-  },
-  tab: {
+  tabSeparator: {
+    color: 'var(--text-secondary)',
     fontFamily: 'var(--font-mono)',
-    fontSize: '11px',
+    fontSize: '16px',
+    opacity: 0.5,
+  },
+  tabToggle: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '13px',
     letterSpacing: '1px',
     textTransform: 'uppercase' as const,
-    padding: '6px 16px',
-    borderRadius: '16px',
-    border: '1px solid var(--border)',
-    background: 'transparent',
-    color: 'var(--text-secondary)',
+    background: 'none',
+    border: 'none',
+    color: 'var(--accent-cyan)',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
-  },
-  tabActive: {
-    background: 'var(--accent-gold)',
-    color: 'var(--bg-primary)',
-    borderColor: 'var(--accent-gold)',
+    padding: 0,
+    textDecoration: 'underline',
+    textUnderlineOffset: '3px',
+    textDecorationColor: 'var(--border)',
+    transition: 'color 0.2s ease',
   },
   notFound: {
     textAlign: 'center' as const,
@@ -220,20 +219,13 @@ export default function StrategyJournalPage() {
         <Link to="/" style={styles.backLink}>&larr; TRADING JOURNAL</Link>
         <div style={styles.titleRow}>
           <span style={styles.title}>{strategy?.name || 'Journal'}</span>
-          <div style={styles.tabs}>
-            <button
-              style={{ ...styles.tab, ...(activeTab === 'journal' ? styles.tabActive : {}) }}
-              onClick={() => setActiveTab('journal')}
-            >
-              Journal
-            </button>
-            <button
-              style={{ ...styles.tab, ...(activeTab === 'analytics' ? styles.tabActive : {}) }}
-              onClick={() => setActiveTab('analytics')}
-            >
-              Analytics
-            </button>
-          </div>
+          <span style={styles.tabSeparator}>|</span>
+          <button
+            style={styles.tabToggle}
+            onClick={() => setActiveTab(activeTab === 'journal' ? 'analytics' : 'journal')}
+          >
+            {activeTab === 'journal' ? '(Analytics)' : '(Journal)'}
+          </button>
         </div>
       </div>
 
