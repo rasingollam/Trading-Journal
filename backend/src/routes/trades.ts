@@ -1,7 +1,10 @@
+import { asc, eq } from "drizzle-orm";
 import { Router } from "express";
 import * as tradesService from "../services/trades.js";
 import { calculateMetrics } from "../services/metrics.js";
 import { upload } from "../middleware/upload.js";
+import { db } from "../db/connection.js";
+import { trades } from "../db/schema.js";
 
 type TradeParams = { strategyId: string; tradeId: string };
 
@@ -42,7 +45,9 @@ router.get("/equity", async (req, res, next) => {
       res.status(400).json({ error: "Invalid strategyId" });
       return;
     }
-    const rows = await tradesService.listTrades(strategyId);
+    const rows = await db.select().from(trades)
+      .where(eq(trades.strategyId, strategyId))
+      .orderBy(asc(trades.createdAt));
     let cumR = 0;
     const equity: { index: number; value: number }[] = [];
     for (const t of rows) {

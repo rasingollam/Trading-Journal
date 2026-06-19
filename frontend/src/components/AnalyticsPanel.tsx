@@ -185,16 +185,14 @@ export default function AnalyticsPanel({ trades, metrics, equity, metricsLoading
     resultR: sortedTrades[i] ? parseFloat(sortedTrades[i].resultR!) : 0,
   }));
 
-  const equityDotColor = (r: number) => r >= 0 ? 'var(--success)' : 'var(--accent-red)';
-
   const statItems = [
     { label: 'Avg Win', value: `+${stats.avgWin.toFixed(2)}R`, color: 'var(--success)' },
     { label: 'Avg Loss', value: `${stats.avgLoss.toFixed(2)}R`, color: 'var(--accent-red)' },
     { label: 'W/L Ratio', value: stats.winLossRatio === Infinity ? '∞' : stats.winLossRatio.toFixed(2), color: 'var(--accent-cyan)' },
     { label: 'Best', value: `+${stats.bestTrade.toFixed(2)}R`, color: 'var(--success)' },
     { label: 'Worst', value: `${stats.worstTrade.toFixed(2)}R`, color: 'var(--accent-red)' },
-    { label: 'Con W', value: String(stats.maxConW), color: 'var(--success)' },
-    { label: 'Con L', value: String(stats.maxConL), color: 'var(--accent-red)' },
+    { label: 'Consecutive Win', value: String(stats.maxConW), color: 'var(--success)' },
+    { label: 'Consecutive Loss', value: String(stats.maxConL), color: 'var(--accent-red)' },
   ];
 
   return (
